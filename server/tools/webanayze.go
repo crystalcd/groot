@@ -7,11 +7,10 @@ import (
 	"net/http"
 
 	"github.com/crystal/groot/global"
-	"github.com/crystal/groot/pool"
 	wappalyzer "github.com/projectdiscovery/wappalyzergo"
 )
 
-func Dowebanayze(jobParam pool.JobParam) {
+func Dowebanayze(jobParam Param) {
 	global.G_LOG.Info("doing Dowebanayze")
 	resp, err := http.DefaultClient.Get("https://www.slack.com")
 	if err != nil {

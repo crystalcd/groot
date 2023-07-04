@@ -1,21 +1,55 @@
 package tools
 
 import (
+	"os"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/crystal/groot/global"
 	"github.com/crystal/groot/pool"
 )
 
-func Dosubfinder(jobParam pool.JobParam) {
+type Subfinder struct{
+	Config Config
+	Param Param
+}
 
-	global.G_LOG.Info("doing Dosubfinder")
-	dir := global.HOME + "/" + jobParam.Project + "/" + "subfinder-domains.txt"
-	domainStr := strings.Join(jobParam.Domains, ",")
-	global.Execute(&exec.Cmd{
-		Path: "/Users/crystal/academy/tools/bin/subfinder",
-		Args: []string{"subfinder", "-d", domainStr, "-o", dir},
-	})
+func NewSubfinder(config Config) *Subfinder {
+	return &Subfinder{
+		Config: config,
+	}
+}
+
+func (s *Subfinder) Do() {
+	var wg sync.WaitGroup
+	for _, line := range strings.Split(s.Param.Target, ",") {
+		wg.Add(1)
+		domain :=strings.TrimSpace(line)
+		pool.DOMAIN_SCAN.Submit(func() {
+			defer wg.Done()
+			s.Run(domain)
+		})
+	}
+	wg.Wait()
+	global.G_LOG.Info("Done Subfinder-----------")
+}
+
+func (s *Subfinder) Run(domain string) {
+	global.G_LOG.Infof("current Running: %d Free: %d", pool.DOMAIN_SCAN.Running(), pool.DOMAIN_SCAN.Free())
+	resultTempFile := GetTempPathFileName()
+	defer os.Remove(resultTempFile)
+
+	path := s.Config.Path
+	
+	cmdArgs := []string{
+		"-d", domain,
+		"-o", "/Users/byronchen/study/test/"+resultTempFile,
+	}
+	cmd := exec.Command(path, cmdArgs...)
+	_, err :=cmd.CombinedOutput()
+	if err != nil {
+		global.G_LOG.Error(err)
+	}
 
 }

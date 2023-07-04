@@ -2,10 +2,9 @@ package tools
 
 import (
 	"github.com/crystal/groot/global"
-	"github.com/crystal/groot/pool"
 )
 
-func Dokatana(jobParam pool.JobParam) {
+func Dokatana(jobParam Param) {
 	global.G_LOG.Info("doing Dokatana")
 
 }

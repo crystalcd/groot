@@ -2,9 +2,8 @@ package tools
 
 import (
 	"github.com/crystal/groot/global"
-	"github.com/crystal/groot/pool"
 )
 
-func Dourlfinder(jobParam pool.JobParam) {
+func Dourlfinder(jobParam Param) {
 	global.G_LOG.Info("doing Doassertfinder")
 }

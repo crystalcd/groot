@@ -2,9 +2,8 @@ package tools
 
 import (
 	"github.com/crystal/groot/global"
-	"github.com/crystal/groot/pool"
 )
 
-func Dowaybackurls(jobParam pool.JobParam) {
+func Dowaybackurls(jobParam Param) {
 	global.G_LOG.Info("doing Dowaybackurls")
 }
