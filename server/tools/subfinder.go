@@ -50,6 +50,11 @@ func (s *Subfinder) Run(domain string) {
 	_, err :=cmd.CombinedOutput()
 	if err != nil {
 		global.G_LOG.Error(err)
+		return
 	}
-
+	data, err := os.ReadFile(resultTempFile)
+	if err != nil {
+		global.G_LOG.Error(err)
+		return
+	}
 }

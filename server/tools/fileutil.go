@@ -24,7 +24,7 @@ func GetRandomString2(n int) string {
 
 // GetTempPathFileName 获取一个临时文件名
 func GetTempPathFileName() (pathFileName string) {
-	return fmt.Sprintf("%s.tmp", GetRandomString2(16))
+	return filepath.Join(os.TempDir(), fmt.Sprintf("%s.tmp", GetRandomString2(16)))
 }
 
 // GetTempPNGPathFileName 获取一个临时文件名，后缀为PNG

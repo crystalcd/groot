@@ -10,3 +10,10 @@ type Param struct {
 	Domain string
 }
 
+type Domain struct {
+	Project string `bson:"project,omitempty"`
+	Domain string `bson:"domain,omitempty"`
+	From string `bson:"from,omitempty"`
+	
+}
+
