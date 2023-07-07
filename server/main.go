@@ -1,16 +1,21 @@
 package main
 
 import (
-	"github.com/crystal/groot/router"
+	"net/http"
+	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/crystal/groot/routers"
 )
 
 func main() {
-	r := gin.Default()
-	// 定义路由和处理函数
-	r.GET("/", router.Rcon)
+	router := routers.InitRouter()
 
-	// 启动服务器
-	r.Run(":8080")
+	s := &http.Server{
+		Addr:           ":8089",
+		Handler:        router,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	s.ListenAndServe()
 }

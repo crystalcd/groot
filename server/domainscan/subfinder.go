@@ -87,7 +87,7 @@ func (s *Subfinder) Write2MongoDB() {
 	allObjs := []bean.Domain{}
 	for _, line := range alldomains {
 		domainObj := bean.Domain{
-			Project: "Slack",
+			Project: "slack",
 			Domain:  line,
 			From:    "subfinder",
 		}
