@@ -1,9 +1,5 @@
 package tools
 
-import (
-	"github.com/crystal/groot/global"
-)
-
-func Dowaybackurls(jobParam Param) {
-	global.G_LOG.Info("doing Dowaybackurls")
-}
+// func Dowaybackurls(jobParam Param) {
+// 	logging.RuntimeLog.Info("doing Dowaybackurls")
+// }

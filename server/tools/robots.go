@@ -1,9 +1,5 @@
 package tools
 
-import (
-	"github.com/crystal/groot/global"
-)
-
-func Dorobots(jobParam Param) {
-	global.G_LOG.Info("doing Dorobots")
-}
+// func Dorobots(jobParam Param) {
+// 	logging.RuntimeLog.Info("doing Dorobots")
+// }

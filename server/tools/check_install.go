@@ -5,7 +5,7 @@ import (
 	"os/user"
 	"runtime"
 
-	"github.com/crystal/groot/global"
+	"github.com/crystal/groot/logging"
 )
 
 var MAC = "darwin"
@@ -13,36 +13,35 @@ var MAC = "darwin"
 func GoCheck() bool {
 	cmd := exec.Command("go", "-version")
 	err := cmd.Run()
-	if (err != nil) {
-		global.G_LOG.Warn("[!] Go is not installed, installing now")
+	if err != nil {
+		logging.RuntimeLog.Warn("[!] Go is not installed, installing now")
 		return false
 	}
-	global.G_LOG.Warn("[+] Go is installed")
+	logging.RuntimeLog.Warn("[+] Go is installed")
 	return true
 }
 
 func InstallGo() {
 	osVersion := runtime.GOOS
-	global.G_LOG.Info(osVersion)
-	if (MAC == osVersion) {
-		global.G_LOG.Info("Mac")
+	logging.RuntimeLog.Info(osVersion)
+	if MAC == osVersion {
+		logging.RuntimeLog.Info("Mac")
 		cmd := exec.Command("brew", "install", "go")
-		err :=cmd.Run()
-		if (err != nil) {
-			global.G_LOG.Warn("-----", err)
+		err := cmd.Run()
+		if err != nil {
+			logging.RuntimeLog.Warn("-----", err)
 		}
 	}
 }
 
 func CheckSubfinder() {
-	
+
 }
 
-
-func getHomeDir() string{
+func getHomeDir() string {
 	homeDir, err := user.Current()
 	if err != nil {
-		global.G_LOG.Error("无法获取Home目录:", err)
+		logging.RuntimeLog.Error("无法获取Home目录:", err)
 	}
 	return homeDir.HomeDir
 }

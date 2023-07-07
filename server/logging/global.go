@@ -1,4 +1,4 @@
-package global
+package logging
 
 import (
 	"fmt"
@@ -8,14 +8,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var G_LOG *logrus.Logger = logrus.New()
+var RuntimeLog *logrus.Logger = logrus.New()
 
 var HOME = "/Users/crystal/groot"
 
 func init() {
-	fmt.Printf("format string")
-	G_LOG.SetReportCaller(true)
-	G_LOG.SetFormatter(&logrus.TextFormatter{
+	RuntimeLog.SetReportCaller(true)
+	RuntimeLog.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 		// 添加调用者信息
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
