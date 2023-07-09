@@ -2,7 +2,6 @@
     <div class="common-layout">
         <el-container>
             <el-header>
-                <HelloWorld></HelloWorld>
                 <Header></Header>
             </el-header>
             <el-container>
@@ -18,7 +17,10 @@
     </div>
 </template>
   
-<script lang="ts">
+<script lang="ts" setup>
+import Aside from '@/views/layout/Aside.vue';
+import Header from '@/views/layout/Header.vue';
+
 
 </script>
   
