@@ -1,23 +1,35 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+
+const modules = import.meta.glob('./modules/**/*.ts', { eager: true })
+
+let routeModuleList: RouteRecordRaw[] = []
+
+// 获取模块路由
+Object.values(modules).forEach((key: any) => {
+  const mod = key.default || []
+  const modList = Array.isArray(mod) ? [...mod] : [mod]
+  routeModuleList.push(...modList)
+})
+
+const constantRoutes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'Home',
+    redirect: '/dashboard',
+    meta: {
+      title: 'home'
+    }
+  },
+]
+
+let routes = constantRoutes
+
+routes = [...routeModuleList, ...constantRoutes]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
-  ]
+  history: createWebHashHistory(),
+  routes
 })
 
 export default router
+export { constantRoutes, routeModuleList }
