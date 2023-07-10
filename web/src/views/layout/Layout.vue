@@ -24,7 +24,16 @@ import Header from '@/views/layout/Header.vue';
 
 </script>
   
-<style lang="">
+<style lang="css">
   /* 样式内容 */
+  .el-aside {
+    height: 100vh;
+    background-color: #f6f7fa;
+  }
+  .el-header {
+  }
+  .el-main {
+    background-color: #3754a9;
+  }
   </style>
   
