@@ -1,8 +1,7 @@
 <template>
   <div class="login-wrap">
     <div class="logo-box flex items-center">
-      <img class="w-60px" src="@/assets/svg/logo.svg" alt="" />
-      <div class="ml-5 font-bold text-5">offbeat-ui</div>
+      <div class="ml-5 font-bold text-5">Groot</div>
     </div>
     <div class="login">
       <div class="main-left_img">
@@ -15,94 +14,57 @@
               <div class="tip" />
               <el-tab-pane label="账号登录" name="password">
                 <el-form-item label="" prop="mobile">
-                  <el-input
-                    v-model="loginForm.mobile"
-                    type="number"
-                    class="m-2"
-                    placeholder="请输入手机号"
-                  >
+                  <el-input v-model="loginForm.mobile" type="number" class="m-2" placeholder="请输入手机号">
                     <template #prefix>
-                      <el-icon :size="22"><iphone /></el-icon>
+                      <el-icon :size="22">
+                        <iphone />
+                      </el-icon>
                     </template>
                   </el-input>
                 </el-form-item>
                 <el-form-item v-if="activeTab === 'password'" prop="password">
-                  <el-input
-                    v-model="loginForm.password"
-                    type="password"
-                    show-password
-                    class="m-2"
-                    placeholder="请输入密码"
-                  >
+                  <el-input v-model="loginForm.password" type="password" show-password class="m-2" placeholder="请输入密码">
                     <template #prefix>
-                      <el-icon :size="22"><lock /></el-icon>
+                      <el-icon :size="22">
+                        <lock />
+                      </el-icon>
                     </template>
                   </el-input>
                 </el-form-item>
               </el-tab-pane>
               <el-tab-pane label="验证码登录" name="code">
                 <el-form-item label="" prop="mobile">
-                  <el-input
-                    v-model="loginForm.mobile"
-                    placeholder="请输入手机号"
-                    class="m-2"
-                  >
+                  <el-input v-model="loginForm.mobile" placeholder="请输入手机号" class="m-2">
                     <template #prefix>
-                      <el-icon :size="22"><iphone /></el-icon>
+                      <el-icon :size="22">
+                        <iphone />
+                      </el-icon>
                     </template>
                   </el-input>
                 </el-form-item>
-                <el-form-item
-                  v-if="activeTab === 'code'"
-                  prop="code"
-                  class="code-item"
-                >
-                  <el-input
-                    v-model="loginForm.code"
-                    maxlength="6"
-                    class="m-2"
-                    placeholder="请输入验证码"
-                  >
+                <el-form-item v-if="activeTab === 'code'" prop="code" class="code-item">
+                  <el-input v-model="loginForm.code" maxlength="6" class="m-2" placeholder="请输入验证码">
                     <template #prefix>
-                      <el-icon :size="22"><discount /></el-icon>
+                      <el-icon :size="22">
+                        <discount />
+                      </el-icon>
                     </template>
                   </el-input>
-                  <el-button
-                    link
-                    type="primary"
-                    :loading="codeLoading"
-                    :disabled="
-                      codeText !== '获取验证码' && codeText !== '重新发送'
-                    "
-                    @click="handleCode"
-                  >
+                  <el-button link type="primary" :loading="codeLoading" :disabled="codeText !== '获取验证码' && codeText !== '重新发送'
+                    " @click="handleCode">
                     {{ codeText }}
                   </el-button>
                 </el-form-item>
               </el-tab-pane>
             </el-tabs>
             <el-form-item class="footer-btn">
-              <el-button
-                type="primary"
-                :loading="loginLoading"
-                class="w-50 m-2"
-                @click="loginFun"
-              >
+              <el-button type="primary" :loading="loginLoading" class="w-50 m-2" @click="loginFun">
                 登 录
               </el-button>
             </el-form-item>
           </el-form>
           <footer>
-            <p>
-              offbeat-ui 备案号：
-              <a
-                class="c-primary decoration-none"
-                href="https://beian.miit.gov.cn"
-                target="_blank"
-              >
-                京ICP备2023016556号-1
-              </a>
-            </p>
+
           </footer>
         </div>
         <!-- 底部 -->
@@ -215,27 +177,33 @@ onMounted(() => {
   z-index: 100;
   padding: 10px 20px 15px;
 }
+
 .el-form {
   width: 408px;
   padding: 50px 21px;
   background: #ffffff;
+
   :deep(.el-input__inner) {
     height: 60px;
     line-height: 60px;
   }
+
   :deep(.el-tabs__item) {
     width: 200px;
     text-align: center;
     font-size: 24px;
     color: #666666;
   }
+
   ::placeholder {
     font-size: 16px;
     color: #c0c4cc;
   }
+
   :deep(.el-tabs__item.is-active) {
     color: #181818;
   }
+
   .code-item .el-button {
     position: absolute;
     height: 22px;
@@ -248,6 +216,7 @@ onMounted(() => {
     font-size: 16px;
     border-radius: 0;
   }
+
   .footer-btn .el-button {
     width: 100%;
     height: 60px;
@@ -277,19 +246,23 @@ onMounted(() => {
   padding: 0 40px;
   background-image: url(@/assets/svg/login_bg.svg);
   background-size: 100% 100%;
+
   .main-left_img {
     flex: 1;
     min-width: 500px;
     margin-top: -60px;
     padding-left: 40px;
+
     img {
       width: 90%;
     }
   }
+
   .login-model {
     width: 600px;
     margin-top: -40px;
   }
+
   .content {
     height: 520px;
     box-shadow: #0000001a 0 2px 10px 2px;
@@ -297,6 +270,7 @@ onMounted(() => {
     overflow: hidden;
   }
 }
+
 footer p {
   width: 100%;
   text-align: center;

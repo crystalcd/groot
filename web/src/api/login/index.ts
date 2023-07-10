@@ -12,6 +12,12 @@ enum URL {
 }
 
 export function login(params: ILogin) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const randomNumber = Math.random();
+      resolve({ "data": { "token": "test" }, "status": { "code": 0, "message": "success" } }); // 异步操作成功，传递结果
+    }, 2000);
+  });
   return post(URL.login, params)
 }
 

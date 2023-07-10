@@ -15,8 +15,8 @@ router.beforeEach((to, from, next) => {
   }
 
   window.document.title = to.meta.title
-    ? `${to.meta.title} | offbeat-ui`
-    : 'offbeat-ui'
+    ? `${to.meta.title} | Groot`
+    : 'Groot'
 
   const isLogin = getToken()
   if (isLogin) {
