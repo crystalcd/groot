@@ -33,7 +33,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="centerDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="centerDialogVisible = false">
+        <el-button type="primary" @click="onSubmit">
           Confirm
         </el-button>
       </span>
@@ -43,6 +43,7 @@
   <script lang="ts" setup>
   import { ref } from 'vue'
   import { reactive } from 'vue'
+  import ApiService from '@/api/ApiService'
   let centerDialogVisible = ref(false);
   function scan() {
     centerDialogVisible.value = true
@@ -51,7 +52,12 @@
   name: '',
   domains: ''
 })
-  
+const onSubmit = () => {
+  console.log('submit!')
+  const apiService = new ApiService('https://api.example.com');
+  apiService.get<>
+  centerDialogVisible.value = false
+}
   </script>
   
   <style>

@@ -14,8 +14,12 @@ export default defineConfig({
     vueJsx(),
     AutoImport({
       resolvers: [ElementPlusResolver()],
+      imports: ['vue', 'vue-router', 'vue-i18n', '@vueuse/head', '@vueuse/core']
     }),
     Components({
+      dirs: ['src/components'],
+      extensions: ['vue'],
+      dts: 'src/components.d.ts',
       resolvers: [ElementPlusResolver()],
     }),
   ],
