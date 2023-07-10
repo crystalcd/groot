@@ -1,5 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Format and submit code according to lintstagedrc.js configuration
-npx --no-install nano-staged
