@@ -1,35 +1,37 @@
-import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
-
-const modules = import.meta.glob('./modules/**/*.ts', { eager: true })
-
-let routeModuleList: RouteRecordRaw[] = []
-
-// 获取模块路由
-Object.values(modules).forEach((key: any) => {
-  const mod = key.default || []
-  const modList = Array.isArray(mod) ? [...mod] : [mod]
-  routeModuleList.push(...modList)
-})
-
-const constantRoutes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    name: 'Home',
-    redirect: '/dashboard',
-    meta: {
-      title: 'home'
-    }
-  },
-]
-
-let routes = constantRoutes
-
-routes = [...routeModuleList, ...constantRoutes]
+import { createRouter, createWebHistory } from 'vue-router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { getToken } from '@/utils'
+import routes from './routes'
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.name !== from.name) {
+    NProgress.start()
+  }
+
+  window.document.title = to.meta.title ? `${to.meta.title} | Groot` : 'Groot'
+
+  const isLogin = getToken()
+  if (isLogin) {
+    if (to.name === 'login') {
+      next('/')
+    } else {
+      next()
+    }
+  } else if (to.name !== 'login') {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+router.afterEach(() => {
+  NProgress.done()
+})
+
 export default router
-export { constantRoutes, routeModuleList }
