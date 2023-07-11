@@ -16,3 +16,11 @@ func GetDomainsByProject(c *gin.Context) {
 	db.DomainCli.Find(context.Background(), bson.M{"project": project}).All(&batch)
 	c.JSON(200, batch)
 }
+
+func ScanDomain(c * gin.Context) {
+
+}
+
+func GetProjects(c *gin.Context) {
+	
+}

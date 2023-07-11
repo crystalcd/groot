@@ -6,7 +6,9 @@
     </el-icon>
     <span class="company-name"> Groot </span>
   </div>
+  
   <div class="header-right">
+    <el-button type="primary" :icon="Edit" circle @click="scan" />
     <el-dropdown>
       <div class="el-dropdown-link flex-center">
         <el-avatar :src="avatar" />
@@ -19,15 +21,21 @@
       </template>
     </el-dropdown>
   </div>
+
+  <o-dialog :modelValue="modelValue">
+    <h1>hellol</h1>
+  </o-dialog>
 </template>
 
 <script lang="ts" setup>
+import { Edit } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { clearLocal, confirmBox } from '@/utils'
 import router from '@/router'
 import avatar from '@/icons/avatar.svg'
+import { Reactive, ref } from 'vue'
 
 defineOptions({
   name: 'OHeader'
@@ -52,6 +60,10 @@ const handleLogout = () => {
     clearLocal()
     router.push('/login')
   })
+}
+const modelValue = Reactive(false)
+const scan = () =>{
+  modelValue.value = true;
 }
 </script>
 
