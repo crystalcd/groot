@@ -33,3 +33,8 @@ type Domain struct {
 	Domain  string `bson:"domain,omitempty"`
 	From    string `bson:"from,omitempty"`
 }
+
+type AddProject struct {
+	Domains string `json:"domains"`
+	ProjectName string `json:"name"`
+}
