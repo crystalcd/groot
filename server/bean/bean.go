@@ -7,8 +7,8 @@ type Config struct {
 }
 
 type Param struct {
-	Target string
-	Domain string
+	Target  string
+	Project string
 }
 
 type Result struct {
@@ -35,6 +35,6 @@ type Domain struct {
 }
 
 type AddProject struct {
-	Domains string `json:"domains"`
+	Domains     string `json:"domains"`
 	ProjectName string `json:"name"`
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/crystal/groot/app"
 	"github.com/crystal/groot/bean"
 	"github.com/crystal/groot/db"
+	"github.com/crystal/groot/domainscan"
 	"github.com/crystal/groot/logging"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -27,6 +28,13 @@ func ScanDomain(c *gin.Context) {
 	var form bean.AddProject
 	c.BindJSON(&form)
 	line := strings.ReplaceAll(form.Domains, "\n", ",")
+	param := bean.Param{
+		Target:  line,
+		Project: form.ProjectName,
+	}
+	s := domainscan.NewSubfinder(param)
+	s.Do()
+	s.Write2MongoDB()
 	logging.RuntimeLog.Info(line)
 	appG.Response(http.StatusOK, 0, form)
 }
