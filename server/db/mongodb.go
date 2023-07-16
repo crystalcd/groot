@@ -5,9 +5,12 @@ import (
 
 	"github.com/crystal/groot/logging"
 	"github.com/qiniu/qmgo"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var DomainCli *qmgo.Collection
+var MongoClient *mongo.Client
 
 func init() {
 	ctx := context.Background()
@@ -18,4 +21,10 @@ func init() {
 	db := client.Database("groot")
 	DomainCli = db.Collection("domains")
 
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	MongoClient, err = mongo.Connect(context.Background(), clientOptions)
+	if err != nil {
+		logging.RuntimeLog.Error(err)
+		return
+	}
 }
