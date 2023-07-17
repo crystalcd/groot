@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/crystal/groot/bean"
 	"github.com/crystal/groot/db"
@@ -30,27 +31,36 @@ type Subfinder struct {
 	Config bean.Config
 	Param  bean.Param
 	Result bean.Result
+	Done   chan bool
 }
 
 func NewSubfinder(param bean.Param) *Subfinder {
 	return &Subfinder{
 		Config: *confg,
 		Param:  param,
+		Done:   make(chan bool),
 	}
+}
+
+func (s *Subfinder) AsyncDo() {
+	pool.DOMAIN_SCAN.Submit(func() {
+		s.Do()
+		s.Done <- true
+	})
 }
 
 func (s *Subfinder) Do() {
 	s.Result.DomainResult = map[string][]string{}
-	// var wg sync.WaitGroup
+	var wg sync.WaitGroup
 	for _, line := range strings.Split(s.Param.Target, ",") {
-		// wg.Add(1)
+		wg.Add(1)
 		domain := strings.TrimSpace(line)
 		pool.DOMAIN_SCAN.Submit(func() {
-			// defer wg.Done()
+			defer wg.Done()
 			s.Run(domain)
 		})
 	}
-	// wg.Wait()
+	wg.Wait()
 	logging.RuntimeLog.Info("Done Subfinder-----------")
 }
 

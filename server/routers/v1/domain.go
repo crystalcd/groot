@@ -33,8 +33,7 @@ func ScanDomain(c *gin.Context) {
 		Project: form.ProjectName,
 	}
 	s := domainscan.NewSubfinder(param)
-	s.Do()
-	s.Write2MongoDB()
+	s.AsyncDo()
 	logging.RuntimeLog.Info(line)
 	appG.Response(http.StatusOK, 0, form)
 }
