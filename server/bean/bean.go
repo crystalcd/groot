@@ -16,6 +16,13 @@ type Result struct {
 	DomainResult map[string][]string
 }
 
+type DomainScan struct {
+	Config Config
+	Param  Param
+	Result Result
+	Done   chan bool
+}
+
 func (r *Result) SetSubDomain(domain, subdoamin string) {
 	r.Lock()
 	defer r.Unlock()

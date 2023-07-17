@@ -14,66 +14,66 @@ import (
 	"github.com/crystal/groot/utils"
 )
 
-var subfinderConfig *bean.Config
+var assetfinderConfg *bean.Config
 
 func init() {
-	str, err := exec.LookPath("subfinder")
-	logging.RuntimeLog.Infof("subfinder path: %s", str)
+	str, err := exec.LookPath("assetfinder")
+	logging.RuntimeLog.Infof("assetfinder path: %s", str)
 	if err != nil {
-		logging.RuntimeLog.Errorf("init subfinder path err %v", err)
+		logging.RuntimeLog.Errorf("init assetfinder path err %v", err)
 	}
-	subfinderConfig = &bean.Config{
+	assetfinderConfg = &bean.Config{
 		Path: str,
 	}
 }
 
-type Subfinder struct {
+type Assetfinder struct {
 	S bean.DomainScan
 }
 
-func NewSubfinder(param bean.Param) *Subfinder {
-	return &Subfinder{
+func NewAssetfinder(param bean.Param) *Assetfinder {
+	return &Assetfinder{
 		S: bean.DomainScan{
-			Config: *subfinderConfig,
+			Config: *assetfinderConfg,
 			Param:  param,
 			Done:   make(chan bool),
 		},
 	}
 }
 
-func (s *Subfinder) AsyncDo() {
+func (a *Assetfinder) AsyncDo() {
 	pool.DOMAIN_SCAN.Submit(func() {
-		s.Do()
-		s.S.Done <- true
+		a.Do()
+		a.S.Done <- true
 	})
 }
 
-func (s *Subfinder) Do() {
-	s.S.Result.DomainResult = map[string][]string{}
+func (a *Assetfinder) Do() {
+	a.S.Result.DomainResult = map[string][]string{}
 	var wg sync.WaitGroup
-	for _, line := range strings.Split(s.S.Param.Target, ",") {
+	for _, line := range strings.Split(a.S.Param.Target, ",") {
 		wg.Add(1)
 		domain := strings.TrimSpace(line)
 		pool.DOMAIN_SCAN.Submit(func() {
 			defer wg.Done()
-			s.Run(domain)
+			a.Run(domain)
 		})
 	}
 	wg.Wait()
-	logging.RuntimeLog.Info("Done Subfinder-----------")
+	logging.RuntimeLog.Info("Done Assetfinder-----------")
 }
 
-func (s *Subfinder) Run(domain string) {
+func (a *Assetfinder) Run(domain string) {
 	logging.RuntimeLog.Infof("current Running: %d Free: %d", pool.DOMAIN_SCAN.Running(), pool.DOMAIN_SCAN.Free())
 	resultTempFile := utils.GetTempPathFileName()
 	logging.RuntimeLog.Infof("temp file: %s", resultTempFile)
 	defer os.Remove(resultTempFile)
 
-	path := s.S.Config.Path
+	path := a.S.Config.Path
 
 	cmdArgs := []string{
-		"-d", domain,
-		"-o", resultTempFile,
+		domain,
+		">", resultTempFile,
 	}
 	cmd := exec.Command(path, cmdArgs...)
 	_, err := cmd.CombinedOutput()
@@ -86,22 +86,22 @@ func (s *Subfinder) Run(domain string) {
 		logging.RuntimeLog.Error(err)
 		return
 	}
-	s.ParseResult(domain, data)
-	s.Write2MongoDB()
+	a.ParseResult(domain, data)
+	a.Write2MongoDB()
 }
 
-func (s *Subfinder) ParseResult(domain string, data []byte) {
+func (a *Assetfinder) ParseResult(domain string, data []byte) {
 	for _, line := range strings.Split(string(data), "\n") {
 		subdomain := strings.TrimSpace(line)
 		if subdomain == "" {
 			continue
 		}
-		s.S.Result.SetSubDomain(domain, subdomain)
+		a.S.Result.SetSubDomain(domain, subdomain)
 	}
 }
 
-func (s *Subfinder) Write2MongoDB() {
-	domainMap := s.S.Result.DomainResult
+func (a *Assetfinder) Write2MongoDB() {
+	domainMap := a.S.Result.DomainResult
 	alldomains := []string{}
 	for key, value := range domainMap {
 		alldomains = append(alldomains, key)
@@ -110,9 +110,9 @@ func (s *Subfinder) Write2MongoDB() {
 	allObjs := []bean.Domain{}
 	for _, line := range alldomains {
 		domainObj := bean.Domain{
-			Project: s.S.Param.Project,
+			Project: a.S.Param.Project,
 			Domain:  line,
-			From:    "subfinder",
+			From:    "assetfinder",
 		}
 		allObjs = append(allObjs, domainObj)
 	}
