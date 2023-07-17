@@ -18,6 +18,7 @@ func InitRouter() *gin.Engine {
 
 		apiv1.GET("/dbs", v1.GetDBS)
 		apiv1.GET("/collections", v1.GetCollections)
+		apiv1.GET("/collections/:db/:table", v1.GetCollectionByTable)
 	}
 	return r
 }

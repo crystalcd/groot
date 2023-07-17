@@ -30,3 +30,18 @@ func GetCollections(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, 0, collections)
 }
+
+func GetCollectionByTable(c *gin.Context) {
+	appG := app.Gin{C: c}
+	dbName := c.Param("db")
+	table := c.Param("table")
+	db := db.QmgoSession.Client.Database(dbName)
+	collection := db.Collection(table)
+	var data []interface{}
+	err := collection.Find(c, bson.M{}).All(&data)
+	if err != nil {
+		logging.RuntimeLog.Error(err)
+	}
+	appG.Response(http.StatusOK, 0, data)
+
+}
