@@ -36,4 +36,6 @@ func init() {
 		logging.RuntimeLog.Error(err)
 		return
 	}
+
+	DomainCli.CreateIndexes()
 }
