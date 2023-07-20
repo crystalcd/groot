@@ -39,5 +39,4 @@ func init() {
 	}
 
 	DomainCli.CreateIndexes(context.Background(), []opts.IndexModel{{Key: []string{"project", "domain", "from"}}})
-
 }

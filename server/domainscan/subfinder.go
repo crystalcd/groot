@@ -9,6 +9,7 @@ import (
 
 	"github.com/crystal/groot/bean"
 	"github.com/crystal/groot/db"
+	"github.com/crystal/groot/eventbus"
 	"github.com/crystal/groot/logging"
 	"github.com/crystal/groot/pool"
 	"github.com/crystal/groot/utils"
@@ -60,7 +61,7 @@ func (s *Subfinder) Do() {
 		})
 	}
 	wg.Wait()
-	logging.RuntimeLog.Info("Done Subfinder-----------")
+	eventbus.EB.Publish(TopicSubfinder, s)
 }
 
 func (s *Subfinder) Run(domain string) {

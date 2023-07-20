@@ -9,6 +9,7 @@ import (
 
 	"github.com/crystal/groot/bean"
 	"github.com/crystal/groot/db"
+	"github.com/crystal/groot/eventbus"
 	"github.com/crystal/groot/logging"
 	"github.com/crystal/groot/pool"
 	"github.com/crystal/groot/utils"
@@ -60,7 +61,7 @@ func (a *Assetfinder) Do() {
 		})
 	}
 	wg.Wait()
-	logging.RuntimeLog.Info("Done Assetfinder-----------")
+	eventbus.EB.Publish(TopicAssetfinder, a)
 }
 
 func (a *Assetfinder) Run(domain string) {
