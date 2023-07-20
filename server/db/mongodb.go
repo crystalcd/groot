@@ -5,6 +5,7 @@ import (
 
 	"github.com/crystal/groot/logging"
 	"github.com/qiniu/qmgo"
+	opts "github.com/qiniu/qmgo/options"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -37,5 +38,6 @@ func init() {
 		return
 	}
 
-	DomainCli.CreateIndexes()
+	DomainCli.CreateIndexes(context.Background(), []opts.IndexModel{{Key: []string{"project", "domain", "from"}}})
+
 }
