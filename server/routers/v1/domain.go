@@ -33,9 +33,9 @@ func ScanDomain(c *gin.Context) {
 		Project: form.ProjectName,
 	}
 	s := domainscan.NewSubfinder(param)
-	domainscan.AsyncScan(s)
+	s.AsyncScan()
 	a := domainscan.NewAssetfinder(param)
-	domainscan.AsyncScan(a)
+	a.AsyncScan()
 	logging.RuntimeLog.Info(line)
 	appG.Response(http.StatusOK, 0, form)
 }

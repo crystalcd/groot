@@ -28,12 +28,15 @@ type Subfinder struct {
 }
 
 func NewSubfinder(param bean.Param) *Subfinder {
-	return &Subfinder{
+
+	subfinder := &Subfinder{
 		DomainScan{
 			Config: *subfinderConfig,
 			Param:  param,
 		},
 	}
+	subfinder.DomainScanExecute = subfinder
+	return subfinder
 }
 
 func (s *Subfinder) run(domain string) {

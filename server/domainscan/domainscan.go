@@ -46,26 +46,24 @@ func printDataEvent(topic string, data eventbus.DataEvent) {
 const TopicSubfinder = "topic_subfinder"
 const TopicAssetfinder = "topic_assetfinder"
 
-type Scan interface {
-	Scan(scan Scan)
+type DomainScanExecute interface {
 	run(domain string)
-	ParseResult(domain string, data []byte)
-	Write2MongoDB(from string)
 }
 
 type DomainScan struct {
 	Config bean.Config
 	Param  bean.Param
 	Result bean.Result
+	DomainScanExecute
 }
 
-func AsyncScan(scan Scan) {
+func (d *DomainScan) AsyncScan() {
 	pool.DOMAIN_SCAN.Submit(func() {
-		scan.Scan(scan)
+		d.Scan()
 	})
 }
 
-func (d *DomainScan) Scan(scan Scan) {
+func (d *DomainScan) Scan() {
 	logging.RuntimeLog.Info("---------------scan start-----------")
 	d.Result.DomainResult = map[string][]string{}
 	var wg sync.WaitGroup
@@ -74,15 +72,11 @@ func (d *DomainScan) Scan(scan Scan) {
 		domain := strings.TrimSpace(line)
 		pool.DOMAIN_SCAN.Submit(func() {
 			defer wg.Done()
-			scan.run(domain)
+			d.run(domain)
 		})
 	}
 	wg.Wait()
-	eventbus.EB.Publish(TopicSubfinder, scan)
-}
-
-func (d *DomainScan) run(domain string) {
-	logging.RuntimeLog.Warn("you need overriding the method Run()")
+	eventbus.EB.Publish(TopicSubfinder, d)
 }
 
 func (d *DomainScan) ParseResult(domain string, data []byte) {

@@ -28,12 +28,11 @@ type Assetfinder struct {
 }
 
 func NewAssetfinder(param bean.Param) *Assetfinder {
-	return &Assetfinder{
-		DomainScan{
-			Config: *assetfinderConfg,
-			Param:  param,
-		},
-	}
+	assetfinder := new(Assetfinder)
+	assetfinder.Param = param
+	assetfinder.Config = *assetfinderConfg
+	assetfinder.DomainScanExecute = assetfinder
+	return assetfinder
 }
 
 func (a *Assetfinder) run(domain string) {
