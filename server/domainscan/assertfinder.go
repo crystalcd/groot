@@ -60,5 +60,5 @@ func (a *Assetfinder) run(domain string) {
 		return
 	}
 	a.ParseResult(domain, data)
-	a.Write2MongoDB(a)
+	a.Write2MongoDB("assertfinder")
 }

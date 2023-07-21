@@ -60,5 +60,5 @@ func (s *Subfinder) run(domain string) {
 		return
 	}
 	s.ParseResult(domain, data)
-	s.Write2MongoDB(s)
+	s.Write2MongoDB("subfinder")
 }

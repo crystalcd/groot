@@ -2,7 +2,6 @@ package domainscan
 
 import (
 	"context"
-	"reflect"
 	"strings"
 	"sync"
 
@@ -49,16 +48,21 @@ const TopicAssetfinder = "topic_assetfinder"
 
 type Scan interface {
 	Scan(scan Scan)
-	AsyncScan(scan Scan)
 	run(domain string)
 	ParseResult(domain string, data []byte)
-	Write2MongoDB(scan Scan)
+	Write2MongoDB(from string)
 }
 
 type DomainScan struct {
 	Config bean.Config
 	Param  bean.Param
 	Result bean.Result
+}
+
+func AsyncScan(scan Scan) {
+	pool.DOMAIN_SCAN.Submit(func() {
+		scan.Scan(scan)
+	})
 }
 
 func (d *DomainScan) Scan(scan Scan) {
@@ -77,12 +81,6 @@ func (d *DomainScan) Scan(scan Scan) {
 	eventbus.EB.Publish(TopicSubfinder, scan)
 }
 
-func (d *DomainScan) AsyncScan(scan Scan) {
-	pool.DOMAIN_SCAN.Submit(func() {
-		scan.Scan(scan)
-	})
-}
-
 func (d *DomainScan) run(domain string) {
 	logging.RuntimeLog.Warn("you need overriding the method Run()")
 }
@@ -97,9 +95,7 @@ func (d *DomainScan) ParseResult(domain string, data []byte) {
 	}
 }
 
-func (d *DomainScan) Write2MongoDB(scan Scan) {
-	t := reflect.TypeOf(scan)
-	from := t.Name()
+func (d *DomainScan) Write2MongoDB(from string) {
 	domainMap := d.Result.DomainResult
 	alldomains := []string{}
 	for key, value := range domainMap {
