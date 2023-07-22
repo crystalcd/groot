@@ -51,9 +51,9 @@ func (a *Assetfinder) run(domain string) {
 		"| tee -a", resultTempFile,
 	}
 	cmd := exec.Command(path, cmdArgs...)
-	_, err := cmd.CombinedOutput()
+	test, err := cmd.CombinedOutput()
 	if err != nil {
-		logging.RuntimeLog.Error(err)
+		logging.RuntimeLog.Error(err, test)
 		return
 	}
 	data, err := os.ReadFile(resultTempFile)
