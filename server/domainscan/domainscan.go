@@ -31,20 +31,19 @@ func init() {
 
 func printDataEvent(topic string, data eventbus.DataEvent) {
 	switch v := data.Data.(type) {
-	case Subfinder:
-		logging.RuntimeLog.Warnf("%s ended type %s", topic, v.Param.Target)
-	case Assetfinder:
-		logging.RuntimeLog.Warnf("%s ended type %s", topic, v.Param.Target)
+	// case Subfinder:
+	// 	logging.RuntimeLog.Warnf("%s ended type %s", topic, v.Param.Target)
+	// case Assetfinder:
+	// 	logging.RuntimeLog.Warnf("%s ended type %s", topic, v.Param.Target)
 	case *Subfinder:
+		logging.RuntimeLog.Warnf("%s ended type %s", topic, v.Param.Target)
+	case *Assetfinder:
 		logging.RuntimeLog.Warnf("%s ended type %s", topic, v.Param.Target)
 	default:
 		logging.RuntimeLog.Warnf("%s ended type %s", topic, "default")
 	}
 
 }
-
-const TopicSubfinder = "topic_subfinder"
-const TopicAssetfinder = "topic_assetfinder"
 
 type DomainScanExecute interface {
 	run(domain string)
@@ -55,6 +54,7 @@ type DomainScan struct {
 	Param  bean.Param
 	Result bean.Result
 	DomainScanExecute
+	Topic string
 }
 
 func (d *DomainScan) AsyncScan() {
@@ -76,7 +76,7 @@ func (d *DomainScan) Scan() {
 		})
 	}
 	wg.Wait()
-	eventbus.EB.Publish(TopicSubfinder, d)
+	eventbus.EB.Publish(d.Topic, d.DomainScanExecute)
 }
 
 func (d *DomainScan) ParseResult(domain string, data []byte) {

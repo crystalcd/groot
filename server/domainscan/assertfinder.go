@@ -10,6 +10,8 @@ import (
 	"github.com/crystal/groot/utils"
 )
 
+const TopicAssetfinder = "topic_assetfinder"
+
 var assetfinderConfg *bean.Config
 
 func init() {
@@ -32,6 +34,7 @@ func NewAssetfinder(param bean.Param) *Assetfinder {
 	assetfinder.Param = param
 	assetfinder.Config = *assetfinderConfg
 	assetfinder.DomainScanExecute = assetfinder
+	assetfinder.Topic = TopicAssetfinder
 	return assetfinder
 }
 
@@ -45,7 +48,7 @@ func (a *Assetfinder) run(domain string) {
 
 	cmdArgs := []string{
 		domain,
-		">", resultTempFile,
+		"| tee -a", resultTempFile,
 	}
 	cmd := exec.Command(path, cmdArgs...)
 	_, err := cmd.CombinedOutput()

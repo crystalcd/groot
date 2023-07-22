@@ -10,6 +10,8 @@ import (
 	"github.com/crystal/groot/utils"
 )
 
+const TopicSubfinder = "topic_subfinder"
+
 var subfinderConfig *bean.Config
 
 func init() {
@@ -33,6 +35,7 @@ func NewSubfinder(param bean.Param) *Subfinder {
 		DomainScan{
 			Config: *subfinderConfig,
 			Param:  param,
+			Topic:  TopicSubfinder,
 		},
 	}
 	subfinder.DomainScanExecute = subfinder
