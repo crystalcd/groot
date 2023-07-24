@@ -21,6 +21,7 @@ type Env struct {
 	RefreshTokenSecret     string `mapstructure:"REFRESH_TOKEN_SECRET"`
 	AsyncPoolCount         int    `mapstructure:"ASYNC_POOL_COUNT"`
 	SubfinderPath          string `mapstructure:"SUBFINDER_PATH"`
+	NaabuPath              string `mapstructure:"NAABU_PATH"`
 }
 
 func NewEnv() *Env {
