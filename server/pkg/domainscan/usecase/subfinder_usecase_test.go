@@ -13,7 +13,7 @@ func TestScan(t *testing.T) {
 	p, _ := ants.NewPool(100)
 	asyncutil.Setup(p)
 	subfinder := NewSubfinderUseCase(&bootstrap.Env{SubfinderPath: "/Users/byronchen/go/bin/subfinder"})
-	rs := subfinder.Scan("baidu.com")
+	rs := subfinder.Scan("baidu.com,zoom.us")
 	for k, v := range rs.R {
 		fmt.Printf("key:%s value:%v", k, v)
 	}

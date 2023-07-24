@@ -6,9 +6,9 @@ type HttpScan struct {
 }
 
 type AbstractHttpScan interface {
-	Run(domain string, port int, tempfile string)
+	Run(host string, port int, tempfile string)
 }
 
 type HttpScanUseCase interface {
-	Scan(target string) *Result
+	Scan(host string, ports []int) *Result
 }

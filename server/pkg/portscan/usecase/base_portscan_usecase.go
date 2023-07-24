@@ -46,13 +46,13 @@ func (b *basePortScanUseCase) scan1domain(domain string) []string {
 }
 
 func (b *basePortScanUseCase) parseResult(domain string, data []byte) []string {
-	subdomains := []string{}
+	domainports := []string{}
 	for _, line := range strings.Split(string(data), "\n") {
-		subdomain := strings.TrimSpace(line)
-		if subdomain == "" {
+		domainport := strings.TrimSpace(line)
+		if domainport == "" {
 			continue
 		}
-		subdomains = append(subdomains, subdomain)
+		domainports = append(domainports, domainport)
 	}
-	return subdomains
+	return domainports
 }

@@ -22,6 +22,7 @@ type Env struct {
 	AsyncPoolCount         int    `mapstructure:"ASYNC_POOL_COUNT"`
 	SubfinderPath          string `mapstructure:"SUBFINDER_PATH"`
 	NaabuPath              string `mapstructure:"NAABU_PATH"`
+	HttpxPath              string `mapstructure:"HTTPX_PATH"`
 }
 
 func NewEnv() *Env {
