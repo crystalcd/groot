@@ -6,17 +6,17 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/internal/asyncutil"
 	"github.com/crystal/groot/internal/fileutil"
-	"github.com/crystal/groot/pkg/portscan/domain"
 )
 
-type basePortScanUseCase struct {
-	domain.PortScan
-	cmd domain.AbstractPortScan
+type baseDomainscan struct {
+	domain.DomainScan
+	cmd domain.AbstractDomainScan
 }
 
-func (b *basePortScanUseCase) Scan(target string) *domain.Result {
+func (b *baseDomainscan) Scan(target string) *domain.Result {
 	rs := &domain.Result{
 		R: make(map[string][]string),
 	}
@@ -34,7 +34,7 @@ func (b *basePortScanUseCase) Scan(target string) *domain.Result {
 	return rs
 }
 
-func (b *basePortScanUseCase) scan1domain(domain string) []string {
+func (b *baseDomainscan) scan1domain(domain string) []string {
 	tempfile := fileutil.GetTempPathFileName()
 	defer os.Remove(tempfile)
 	b.cmd.Run(domain, tempfile)
@@ -45,14 +45,14 @@ func (b *basePortScanUseCase) scan1domain(domain string) []string {
 	return b.parseResult(domain, data)
 }
 
-func (b *basePortScanUseCase) parseResult(domain string, data []byte) []string {
-	domainports := []string{}
+func (b *baseDomainscan) parseResult(domain string, data []byte) []string {
+	subdomains := []string{}
 	for _, line := range strings.Split(string(data), "\n") {
-		domainport := strings.TrimSpace(line)
-		if domainport == "" {
+		subdomain := strings.TrimSpace(line)
+		if subdomain == "" {
 			continue
 		}
-		domainports = append(domainports, domainport)
+		subdomains = append(subdomains, subdomain)
 	}
-	return domainports
+	return subdomains
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/crystal/groot/api/controller"
 	"github.com/crystal/groot/bootstrap"
-	"github.com/crystal/groot/pkg/domainscan/usecase"
+	"github.com/crystal/groot/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/qiniu/qmgo"
 )

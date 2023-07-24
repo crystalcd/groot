@@ -5,7 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/crystal/groot/bootstrap"
-	"github.com/crystal/groot/pkg/portscan/domain"
+	"github.com/crystal/groot/domain"
 )
 
 type naabuUseCase struct {

@@ -6,9 +6,9 @@ import (
 	"os"
 	"sync"
 
+	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/internal/asyncutil"
 	"github.com/crystal/groot/internal/fileutil"
-	"github.com/crystal/groot/pkg/httpscan/domain"
 )
 
 type baseHttpScan struct {
@@ -16,8 +16,8 @@ type baseHttpScan struct {
 	cmd domain.AbstractHttpScan
 }
 
-func (b *baseHttpScan) Scan(host string, ports []int) *domain.Result {
-	rs := &domain.Result{
+func (b *baseHttpScan) Scan(host string, ports []int) *domain.HttpResults {
+	rs := &domain.HttpResults{
 		R: []domain.HttpResult{},
 	}
 	var wg sync.WaitGroup

@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-type Result struct {
+type HttpResults struct {
 	sync.RWMutex
 	R []HttpResult
 }
 
-func (r *Result) Append(httpresult HttpResult) {
+func (r *HttpResults) Append(httpresult HttpResult) {
 	r.Lock()
 	defer r.Unlock()
 	r.R = append(r.R, httpresult)

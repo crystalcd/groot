@@ -3,7 +3,7 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/crystal/groot/pkg/domainscan/domain"
+	"github.com/crystal/groot/domain"
 )
 
 type assetfinderUseCase struct {

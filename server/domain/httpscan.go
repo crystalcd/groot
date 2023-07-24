@@ -10,5 +10,5 @@ type AbstractHttpScan interface {
 }
 
 type HttpScanUseCase interface {
-	Scan(host string, ports []int) *Result
+	Scan(host string, ports []int) *HttpResults
 }

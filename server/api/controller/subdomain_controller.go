@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/crystal/groot/bootstrap"
-	"github.com/crystal/groot/pkg/domainscan/domain"
+	"github.com/crystal/groot/domain"
 	"github.com/gin-gonic/gin"
 )
 

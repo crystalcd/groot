@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/crystal/groot/bootstrap"
-	"github.com/crystal/groot/pkg/httpscan/domain"
+	"github.com/crystal/groot/domain"
 )
 
 type httpxUseCase struct {
