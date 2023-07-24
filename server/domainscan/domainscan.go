@@ -8,8 +8,8 @@ import (
 	"github.com/crystal/groot/bean"
 	"github.com/crystal/groot/db"
 	"github.com/crystal/groot/eventbus"
+	"github.com/crystal/groot/internal/asyncutil"
 	"github.com/crystal/groot/logging"
-	"github.com/crystal/groot/pool"
 )
 
 func init() {
@@ -58,7 +58,7 @@ type DomainScan struct {
 }
 
 func (d *DomainScan) AsyncScan() {
-	pool.DOMAIN_SCAN.Submit(func() {
+	asyncutil.AsyncDo(func() {
 		d.Scan()
 	})
 }
@@ -70,7 +70,7 @@ func (d *DomainScan) Scan() {
 	for _, line := range strings.Split(d.Param.Target, ",") {
 		wg.Add(1)
 		domain := strings.TrimSpace(line)
-		pool.DOMAIN_SCAN.Submit(func() {
+		asyncutil.AsyncDo(func() {
 			defer wg.Done()
 			d.run(domain)
 		})

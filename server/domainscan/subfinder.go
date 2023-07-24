@@ -5,9 +5,8 @@ import (
 	"os/exec"
 
 	"github.com/crystal/groot/bean"
+	"github.com/crystal/groot/internal/fileutil"
 	"github.com/crystal/groot/logging"
-	"github.com/crystal/groot/pool"
-	"github.com/crystal/groot/utils"
 )
 
 const TopicSubfinder = "topic_subfinder"
@@ -43,8 +42,7 @@ func NewSubfinder(param bean.Param) *Subfinder {
 }
 
 func (s *Subfinder) run(domain string) {
-	logging.RuntimeLog.Infof("current Running: %d Free: %d", pool.DOMAIN_SCAN.Running(), pool.DOMAIN_SCAN.Free())
-	resultTempFile := utils.GetTempPathFileName()
+	resultTempFile := fileutil.GetTempPathFileName()
 	logging.RuntimeLog.Infof("temp file: %s", resultTempFile)
 	defer os.Remove(resultTempFile)
 

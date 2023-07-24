@@ -9,5 +9,6 @@ import (
 )
 
 func Setup(env *bootstrap.Env, timeout time.Duration, db *qmgo.Database, gin *gin.Engine) {
-
+	v1 := gin.Group("/v1")
+	NewSubdomainRouter(env, timeout, db, v1)
 }

@@ -19,11 +19,16 @@ type DomainScan struct {
 	Config Config
 	Result Result
 	Topic  string
-	Cmd    ScanCmdExecute
+	Cmd    AbstractDomainScan
 }
 
-type ScanCmdExecute interface {
+type AbstractDomainScan interface {
 	Run(domain string)
+}
+
+type DomainScanI interface {
+	AsyncScan(target string) error
+	Scan(target string)
 }
 
 func (d *DomainScan) AsyncScan(target string) error {
