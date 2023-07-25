@@ -13,7 +13,7 @@ func TestHttpx(t *testing.T) {
 	p, _ := ants.NewPool(100)
 	asyncutil.Setup(p)
 	httpx := NewHttpxUseCase(&bootstrap.Env{HttpxPath: "/Users/crystal/go/bin/httpx"})
-	ports := []int{80, 443}
+	ports := []string{"80", "443"}
 	rs := httpx.Scan("zoom.us", ports)
 	for _, obj := range rs.R {
 		fmt.Printf("obj=%+v \n", obj)

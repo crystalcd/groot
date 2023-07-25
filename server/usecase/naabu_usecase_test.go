@@ -10,10 +10,10 @@ import (
 )
 
 func TestScanNaabu(t *testing.T) {
-	p, _ := ants.NewPool(100)
+	p, _ := ants.NewPool(10000)
 	asyncutil.Setup(p)
 	naabu := NewNaabuUseCase(&bootstrap.Env{NaabuPath: "/Users/byronchen/go/bin/naabu"})
-	rs := naabu.Scan("zoom.us")
+	rs := naabu.Scan(`baiduspider-123-125-66-50.crawl.baidu.com`)
 	for k, v := range rs.R {
 		fmt.Printf("key:%s value:%v", k, v)
 	}

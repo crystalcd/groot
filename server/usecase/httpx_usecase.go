@@ -3,7 +3,6 @@ package usecase
 import (
 	"log"
 	"os/exec"
-	"strconv"
 
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
@@ -20,11 +19,11 @@ func NewHttpxUseCase(env *bootstrap.Env) domain.HttpScanUseCase {
 	return httpx
 }
 
-func (h *httpxUseCase) Run(host string, port int, tempfile string) {
+func (h *httpxUseCase) Run(host string, port string, tempfile string) {
 	path := h.Path
 	cmdArgs := []string{
 		"-u", host,
-		"-p", strconv.Itoa(port),
+		"-p", port,
 		"-o", tempfile,
 		"-json",
 		"-threads", "1",

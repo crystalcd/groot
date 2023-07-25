@@ -28,6 +28,6 @@ func (n *naabuUseCase) Run(domain string, tempfile string) {
 	cmd := exec.Command(path, cmdArgs...)
 	_, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("naabu err %v", err)
 	}
 }

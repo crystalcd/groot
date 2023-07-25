@@ -40,7 +40,7 @@ func (b *basePortScanUseCase) scan1domain(domain string) []string {
 	b.cmd.Run(domain, tempfile)
 	data, err := os.ReadFile(tempfile)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("read file err %v", err)
 	}
 	return b.parseResult(domain, data)
 }
@@ -52,7 +52,8 @@ func (b *basePortScanUseCase) parseResult(domain string, data []byte) []string {
 		if domainport == "" {
 			continue
 		}
-		domainports = append(domainports, domainport)
+		port := strings.Split(domainport, ":")[1]
+		domainports = append(domainports, port)
 	}
 	return domainports
 }

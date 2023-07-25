@@ -16,7 +16,7 @@ type baseHttpScan struct {
 	cmd domain.AbstractHttpScan
 }
 
-func (b *baseHttpScan) Scan(host string, ports []int) *domain.HttpResults {
+func (b *baseHttpScan) Scan(host string, ports []string) *domain.HttpResults {
 	rs := &domain.HttpResults{
 		R: []domain.HttpResult{},
 	}
@@ -34,7 +34,7 @@ func (b *baseHttpScan) Scan(host string, ports []int) *domain.HttpResults {
 	return rs
 }
 
-func (b *baseHttpScan) scan1port(host string, port int) domain.HttpResult {
+func (b *baseHttpScan) scan1port(host string, port string) domain.HttpResult {
 	tempfile := fileutil.GetTempPathFileName()
 	defer os.Remove(tempfile)
 	b.cmd.Run(host, port, tempfile)
