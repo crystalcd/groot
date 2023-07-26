@@ -3,14 +3,12 @@ package bootstrap
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/qiniu/qmgo"
-	"github.com/sirupsen/logrus"
 )
 
-func NewMongoDataBase(env *Env, logger *logrus.Logger) *qmgo.Client {
+func NewMongoDataBase(env *Env) *qmgo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	dbHost := env.DBHost
@@ -22,18 +20,18 @@ func NewMongoDataBase(env *Env, logger *logrus.Logger) *qmgo.Client {
 		Uri: mongoDBURI,
 	})
 	if err != nil {
-		log.Fatal(err)
+		Logger.Fatal(err)
 	}
 	return client
 }
 
-func CloseMongoDbConnection(client *qmgo.Client, logger *logrus.Logger) {
+func CloseMongoDbConnection(client *qmgo.Client) {
 	if client == nil {
 		return
 	}
 	err := client.Close(context.TODO())
 	if err != nil {
-		log.Fatal(err)
+		Logger.Fatal(err)
 	}
-	logger.Info("Connection to MongoDB closed.")
+	Logger.Info("Connection to MongoDB closed.")
 }
