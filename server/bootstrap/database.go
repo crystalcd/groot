@@ -7,9 +7,10 @@ import (
 	"time"
 
 	"github.com/qiniu/qmgo"
+	"github.com/sirupsen/logrus"
 )
 
-func NewMongoDataBase(env *Env) *qmgo.Client {
+func NewMongoDataBase(env *Env, logger *logrus.Logger) *qmgo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	dbHost := env.DBHost
@@ -26,7 +27,7 @@ func NewMongoDataBase(env *Env) *qmgo.Client {
 	return client
 }
 
-func CloseMongoDbConnection(client *qmgo.Client) {
+func CloseMongoDbConnection(client *qmgo.Client, logger *logrus.Logger) {
 	if client == nil {
 		return
 	}
@@ -34,5 +35,5 @@ func CloseMongoDbConnection(client *qmgo.Client) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Connection to MongoDB closed.")
+	logger.Info("Connection to MongoDB closed.")
 }
