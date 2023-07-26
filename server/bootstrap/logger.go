@@ -1,4 +1,4 @@
-package logging
+package bootstrap
 
 import (
 	"fmt"
@@ -8,13 +8,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var RuntimeLog *logrus.Logger = logrus.New()
-
-var HOME = "/Users/crystal/groot"
-
-func init() {
-	RuntimeLog.SetReportCaller(true)
-	RuntimeLog.SetFormatter(&logrus.TextFormatter{
+func NewLogger(env *Env) *logrus.Logger {
+	logger := logrus.New()
+	logger.SetReportCaller(true)
+	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 		// 添加调用者信息
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
@@ -22,5 +19,5 @@ func init() {
 			return fmt.Sprintf("%s()", f.Function), fmt.Sprintf("%s:%d", filename, f.Line)
 		},
 	})
-
+	return logger
 }

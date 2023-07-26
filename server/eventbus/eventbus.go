@@ -2,8 +2,6 @@ package eventbus
 
 import (
 	"sync"
-
-	"github.com/crystal/groot/logging"
 )
 
 var EB = &EventBus{
@@ -25,7 +23,6 @@ type EventBus struct {
 }
 
 func (eb *EventBus) Publish(topic string, data interface{}) {
-	logging.RuntimeLog.Infof("<--------------publish topic: %s", topic)
 	eb.rm.RLock()
 	defer eb.rm.RUnlock()
 	if chans, found := eb.subscribers[topic]; found {
@@ -41,7 +38,6 @@ func (eb *EventBus) Publish(topic string, data interface{}) {
 }
 
 func (eb *EventBus) Subscribe(topic string, ch DataChannel) {
-	logging.RuntimeLog.Infof("-------------->subscribe topic: %s", topic)
 	eb.rm.Lock()
 	defer eb.rm.Unlock()
 	if prev, found := eb.subscribers[topic]; found {
