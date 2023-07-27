@@ -1,10 +1,12 @@
 package scan
 
 import (
-	"log"
+	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/crystal/groot/bootstrap"
+	"github.com/crystal/groot/internal/fileutil"
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,14 +32,23 @@ func NewSubfinderWithPath(path string) *subfinder {
 	}
 }
 
-func (s *subfinder) Scan(domain string, tempfile string) []string {
+func (s *subfinder) Scan(domain string) ([]string, error) {
+	rs := []string{}
+	temp := fileutil.GetTempPathFileName()
 	cmdArgs := []string{
 		"-d", domain,
-		"-o", tempfile,
+		"-o", temp,
 	}
 	cmd := exec.Command(s.Path, cmdArgs...)
 	_, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err)
+		return rs, err
 	}
+
+	data, err := os.ReadFile(temp)
+	if err != nil {
+		return rs, err
+	}
+	rs = append(rs, strings.Split(string(data), "\n")...)
+	return rs, nil
 }
