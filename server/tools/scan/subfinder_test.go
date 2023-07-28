@@ -80,3 +80,12 @@ func TestWaybackUrls(t *testing.T) {
 	}
 	bootstrap.Logger.Info(rs)
 }
+
+func TestWappalyze(t *testing.T) {
+	wappalyzer := scan.NewWappalyze()
+	rs, err := wappalyzer.Scan("http://zoom.us")
+	if err != nil {
+		bootstrap.Logger.Error(err)
+	}
+	bootstrap.Logger.Infof("%+v", rs)
+}
