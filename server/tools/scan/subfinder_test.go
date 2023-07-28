@@ -71,3 +71,12 @@ func TestDomainAndPort(t *testing.T) {
 	wg.Wait()
 	bootstrap.Logger.Infof("%+v", domainPort)
 }
+
+func TestWaybackUrls(t *testing.T) {
+	waybackurls := scan.NewWaybackurls()
+	rs, err := waybackurls.Scan("zoom.us")
+	if err != nil {
+		bootstrap.Logger.Error(err)
+	}
+	bootstrap.Logger.Info(rs)
+}
