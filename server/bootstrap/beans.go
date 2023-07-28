@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	Logger *logrus.Logger
+	Logger *logrus.Logger = logrus.New()
 	Pool   *ants.Pool
 )
 

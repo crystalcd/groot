@@ -2,10 +2,18 @@ package scan_test
 
 import (
 	"log"
+	"sync"
 	"testing"
 
+	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/tools/scan"
 )
+
+func TestMain(m *testing.M) {
+	app := bootstrap.App()
+	bootstrap.InjectBeans(app.Env)
+	m.Run()
+}
 
 func TestScan(t *testing.T) {
 	subfinder := scan.NewSubfinder()
@@ -23,4 +31,43 @@ func TestNaabu(t *testing.T) {
 		log.Panic(err)
 	}
 	log.Printf("ports: %v", ports)
+}
+
+func TestHttpx(t *testing.T) {
+	httpx := scan.NewHttpx()
+	ports := []string{"80", "443"}
+	rs, err := httpx.Scan("baidu.com", ports)
+	if err != nil {
+		bootstrap.Logger.Error(err)
+	}
+	bootstrap.Logger.Infof(" length %d, %+v", len(rs), rs)
+}
+
+func TestDomainAndPort(t *testing.T) {
+	domainPort := make(map[string][]string)
+	var l sync.RWMutex
+	subfinder := scan.NewSubfinder()
+	naabu := scan.NewNaabu()
+	subdomains, err := subfinder.Scan("baidu.com")
+	if err != nil {
+		bootstrap.Logger.Error(err)
+	}
+	var wg sync.WaitGroup
+	for _, sudomain := range subdomains {
+		host := sudomain
+		wg.Add(1)
+		go func() {
+			ports, err := naabu.Scan(host)
+			if err != nil {
+				bootstrap.Logger.Error(err)
+				//ignore
+			}
+			l.Lock()
+			domainPort[host] = ports
+			l.Unlock()
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+	bootstrap.Logger.Infof("%+v", domainPort)
 }

@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/internal/fileutil"
 )
 
@@ -15,7 +16,7 @@ type naabu struct {
 func NewNaabu() *naabu {
 	path, err := exec.LookPath("naabu")
 	if err != nil {
-		Logger.Fatal(err)
+		bootstrap.Logger.Fatal(err)
 	}
 	return &naabu{
 		Path: path,
@@ -25,6 +26,7 @@ func NewNaabu() *naabu {
 func (n *naabu) Scan(host string) ([]string, error) {
 	rs := []string{}
 	temp := fileutil.GetTempPathFileName()
+	defer os.Remove(temp)
 	cmdArgs := []string{
 		"-host", host,
 		"-o", temp,

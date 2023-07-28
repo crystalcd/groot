@@ -1,7 +1,10 @@
 package bootstrap
 
 import (
+	"fmt"
 	"log"
+	"path/filepath"
+	"runtime"
 
 	"github.com/spf13/viper"
 )
@@ -26,8 +29,12 @@ type Env struct {
 }
 
 func NewEnv() *Env {
+	_, goMod, _, _ := runtime.Caller(0)
+	root := filepath.Dir(filepath.Dir(goMod))
+	log.Printf("root: %s", root)
 	env := Env{}
-	viper.SetConfigFile(".env")
+	conffile := fmt.Sprintf("%s/.env", root)
+	viper.SetConfigFile(conffile)
 
 	err := viper.ReadInConfig()
 	if err != nil {

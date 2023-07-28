@@ -13,5 +13,5 @@ type SubdomainController struct {
 }
 
 func (sc *SubdomainController) Scan(c *gin.Context) {
-	sc.Subfinder.Scan("test")
+	Logger.Info("heeeee")
 }
