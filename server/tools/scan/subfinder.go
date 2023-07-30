@@ -30,7 +30,7 @@ func NewSubfinderWithPath(path string) *Subfinder {
 }
 
 func (s *Subfinder) Scan(domain string) ([]string, error) {
-	rs := []string{}
+	rs := []string{domain}
 	temp := fileutil.GetTempPathFileName()
 	defer os.Remove(temp)
 	cmdArgs := []string{

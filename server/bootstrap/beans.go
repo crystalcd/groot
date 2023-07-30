@@ -27,6 +27,7 @@ func InjectBeans(env *Env) {
 
 func NewLogger(env *Env) *logrus.Logger {
 	logger := logrus.New()
+	logger.SetLevel(logrus.DebugLevel)
 	logger.SetReportCaller(true)
 	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,10 +27,14 @@ func NewHttpx() *Httpx {
 	}
 }
 
-func (h *Httpx) Scan(host string, ports []string) ([]HttpxResult, error) {
+func (h *Httpx) Scan(host string, ports []int) ([]HttpxResult, error) {
 	rs := []HttpxResult{}
 	path := h.Path
-	portstr := strings.Join(ports, ",")
+	portstrs := []string{}
+	for _, v := range ports {
+		portstrs = append(portstrs, strconv.Itoa(v))
+	}
+	portstr := strings.Join(portstrs, ",")
 	temp := fileutil.GetTempPathFileName()
 	defer os.Remove(temp)
 	cmdArgs := []string{

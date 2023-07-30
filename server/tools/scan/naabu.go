@@ -3,6 +3,7 @@ package scan
 import (
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/crystal/groot/bootstrap"
@@ -23,8 +24,8 @@ func NewNaabu() *Naabu {
 	}
 }
 
-func (n *Naabu) Scan(host string) ([]string, error) {
-	rs := []string{}
+func (n *Naabu) Scan(host string) ([]int, error) {
+	rs := []int{}
 	temp := fileutil.GetTempPathFileName()
 	defer os.Remove(temp)
 	cmdArgs := []string{
@@ -47,7 +48,12 @@ func (n *Naabu) Scan(host string) ([]string, error) {
 		if line == "" {
 			continue
 		}
-		rs = append(rs, strings.Split(line, ":")[1])
+		portStr := strings.Split(line, ":")[1]
+		port, err := strconv.Atoi(portStr)
+		if err != nil {
+			continue
+		}
+		rs = append(rs, port)
 	}
 	return rs, nil
 }

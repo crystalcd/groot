@@ -35,7 +35,7 @@ func TestNaabu(t *testing.T) {
 
 func TestHttpx(t *testing.T) {
 	httpx := scan.NewHttpx()
-	ports := []string{"80", "443"}
+	ports := []int{80, 443}
 	rs, err := httpx.Scan("baidu.com", ports)
 	if err != nil {
 		bootstrap.Logger.Error(err)
@@ -44,7 +44,7 @@ func TestHttpx(t *testing.T) {
 }
 
 func TestDomainAndPort(t *testing.T) {
-	domainPort := make(map[string][]string)
+	domainPort := make(map[string][]int)
 	var l sync.RWMutex
 	subfinder := scan.NewSubfinder()
 	naabu := scan.NewNaabu()

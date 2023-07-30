@@ -17,14 +17,15 @@ type ScanService struct {
 	Httpx               *scan.Httpx
 	Wappalyze           *scan.Wappalyze
 	Waybackurls         *scan.Waybackurls
-	subdomainRepository domain.SubdomainRepository
+	SubdomainRepository domain.SubdomainRepository
 }
 
-func NewScanService(s *scan.Subfinder, n *scan.Naabu, h *scan.Httpx) *ScanService {
+func NewScanService(s *scan.Subfinder, n *scan.Naabu, h *scan.Httpx, sr domain.SubdomainRepository) *ScanService {
 	return &ScanService{
-		Subfinder: s,
-		Naabu:     n,
-		Httpx:     h,
+		Subfinder:           s,
+		Naabu:               n,
+		Httpx:               h,
+		SubdomainRepository: sr,
 	}
 }
 
@@ -43,7 +44,7 @@ func (s *ScanService) Scan(project, target string) {
 		}
 		domains = append(domains, domainLine)
 	}
-	s.subdomainRepository.InsertSubdomains(context.Background(), domains)
+	s.SubdomainRepository.InsertSubdomains(context.Background(), domains)
 	bootstrap.Logger.Info(portMap)
 	httxResult := s.BatchHttpx(portMap)
 	bootstrap.Logger.Info(httxResult)
@@ -52,28 +53,32 @@ func (s *ScanService) Scan(project, target string) {
 func (s *ScanService) BatchSubfinder(target string) []string {
 	var sw sync.WaitGroup
 	var subdomains []string
-	var err error
+	var l sync.RWMutex
 	for _, line := range strings.Split(target, ",") {
 		domain := line
 		sw.Add(1)
 		bootstrap.DomainPool.Submit(func() {
-			subdomains, err = s.Subfinder.Scan(domain)
+			domains, err := s.Subfinder.Scan(domain)
 			if err != nil {
 				bootstrap.Logger.Error(err)
 			}
+			sw.Done()
+			l.Lock()
+			subdomains = append(subdomains, domains...)
+			l.Unlock()
 		})
-		sw.Done()
+
 	}
 	sw.Wait()
 	return subdomains
 }
 
-func (s *ScanService) BatchNaabu(subdomains []string) map[string][]string {
+func (s *ScanService) BatchNaabu(subdomains []string) map[string][]int {
 	var err error
 	var sw sync.WaitGroup
-	var portMap = make(map[string][]string)
+	var portMap = make(map[string][]int)
 	var l sync.RWMutex
-	var ports []string
+	var ports []int
 	for _, line := range subdomains {
 		host := line
 		sw.Add(1)
@@ -82,31 +87,36 @@ func (s *ScanService) BatchNaabu(subdomains []string) map[string][]string {
 			if err != nil {
 				bootstrap.Logger.Error(err)
 			}
+			sw.Done()
 		})
 		l.Lock()
 		portMap[host] = ports
 		l.Unlock()
-		sw.Done()
+
 	}
 	sw.Wait()
 	return portMap
 }
 
-func (s *ScanService) BatchHttpx(portMap map[string][]string) []scan.HttpxResult {
+func (s *ScanService) BatchHttpx(portMap map[string][]int) []scan.HttpxResult {
 	var httpxResult []scan.HttpxResult
-	var err error
 	var sw sync.WaitGroup
+	var l sync.RWMutex
 	for k, v := range portMap {
 		domain := k
 		ports := v
 		sw.Add(1)
 		bootstrap.HttpPool.Submit(func() {
-			httpxResult, err = s.Httpx.Scan(domain, ports)
+			rs, err := s.Httpx.Scan(domain, ports)
 			if err != nil {
 				bootstrap.Logger.Error(err)
 			}
+			sw.Done()
+			l.Lock()
+			httpxResult = append(httpxResult, rs...)
+			l.Unlock()
 		})
-		sw.Done()
+
 	}
 	sw.Wait()
 	return httpxResult
