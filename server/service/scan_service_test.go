@@ -19,5 +19,5 @@ func TestScan(t *testing.T) {
 	n := scan.NewNaabu()
 	h := scan.NewHttpx()
 	scanService := service.NewScanService(s, n, h)
-	scanService.Scan("zoom.us")
+	scanService.Scan("zoom", "zoom.us")
 }

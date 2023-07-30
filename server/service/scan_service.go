@@ -1,19 +1,23 @@
 package service
 
 import (
+	"context"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/crystal/groot/bootstrap"
+	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/tools/scan"
 )
 
 type ScanService struct {
-	Subfinder   *scan.Subfinder
-	Naabu       *scan.Naabu
-	Httpx       *scan.Httpx
-	Wappalyze   *scan.Wappalyze
-	Waybackurls *scan.Waybackurls
+	Subfinder           *scan.Subfinder
+	Naabu               *scan.Naabu
+	Httpx               *scan.Httpx
+	Wappalyze           *scan.Wappalyze
+	Waybackurls         *scan.Waybackurls
+	subdomainRepository domain.SubdomainRepository
 }
 
 func NewScanService(s *scan.Subfinder, n *scan.Naabu, h *scan.Httpx) *ScanService {
@@ -24,10 +28,22 @@ func NewScanService(s *scan.Subfinder, n *scan.Naabu, h *scan.Httpx) *ScanServic
 	}
 }
 
-func (s *ScanService) Scan(target string) {
+func (s *ScanService) Scan(project, target string) {
 	subdomains := s.BatchSubfinder(target)
 	bootstrap.Logger.Info(subdomains)
 	portMap := s.BatchNaabu(subdomains)
+	domains := []domain.Subdomain{}
+	for k, v := range portMap {
+		domainLine := domain.Subdomain{
+			Project:    project,
+			Domain:     k,
+			From:       "subfinder",
+			Ports:      v,
+			CreateTime: time.Now(),
+		}
+		domains = append(domains, domainLine)
+	}
+	s.subdomainRepository.InsertSubdomains(context.Background(), domains)
 	bootstrap.Logger.Info(portMap)
 	httxResult := s.BatchHttpx(portMap)
 	bootstrap.Logger.Info(httxResult)

@@ -1,15 +1,20 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 const (
 	CollectionSubdomains = "domains"
 )
 
 type Subdomain struct {
-	Project string `bson:"project,omitempty"`
-	Domain  string `bson:"domain,omitempty"`
-	From    string `bson:"from,omitempty"`
+	Project    string    `bson:"project,omitempty"`
+	Domain     string    `bson:"domain,omitempty"`
+	From       string    `bson:"from,omitempty"`
+	Ports      []string  `bson:"ports"`
+	CreateTime time.Time `bson:"create_time"`
 }
 
 type SubdomainRepository interface {
