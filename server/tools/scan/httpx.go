@@ -44,7 +44,10 @@ func (h *httpx) Scan(host string, ports []string) ([]HttpxResult, error) {
 		return rs, err
 	}
 
-	file, _ := os.Open(temp)
+	file, err := os.Open(temp)
+	if err != nil {
+		return rs, err
+	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
