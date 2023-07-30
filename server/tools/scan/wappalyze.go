@@ -7,14 +7,14 @@ import (
 	wappalyzer "github.com/projectdiscovery/wappalyzergo"
 )
 
-type wappalyze struct {
+type Wappalyze struct {
 }
 
-func NewWappalyze() *wappalyze {
-	return &wappalyze{}
+func NewWappalyze() *Wappalyze {
+	return &Wappalyze{}
 }
 
-func (w *wappalyze) Scan(url string) (map[string]struct{}, error) {
+func (w *Wappalyze) Scan(url string) (map[string]struct{}, error) {
 	rs := make(map[string]struct{})
 	resp, err := http.DefaultClient.Get(url)
 	if err != nil {

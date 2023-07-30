@@ -7,21 +7,21 @@ import (
 	"github.com/crystal/groot/bootstrap"
 )
 
-type waybackurls struct {
+type Waybackurls struct {
 	Path string
 }
 
-func NewWaybackurls() *waybackurls {
+func NewWaybackurls() *Waybackurls {
 	path, err := exec.LookPath("waybackurls")
 	if err != nil {
 		bootstrap.Logger.Fatal(err)
 	}
-	return &waybackurls{
+	return &Waybackurls{
 		Path: path,
 	}
 }
 
-func (w *waybackurls) Scan(domain string) ([]string, error) {
+func (w *Waybackurls) Scan(domain string) ([]string, error) {
 	rs := []string{}
 	path := w.Path
 	cmdArgs := []string{
@@ -32,6 +32,6 @@ func (w *waybackurls) Scan(domain string) ([]string, error) {
 	if err != nil {
 		return rs, err
 	}
-    rs = append(rs, strings.Split(string(output), "\n")...)
+	rs = append(rs, strings.Split(string(output), "\n")...)
 	return rs, nil
 }

@@ -11,21 +11,21 @@ import (
 	"github.com/crystal/groot/internal/fileutil"
 )
 
-type katana struct {
+type Katana struct {
 	Path string
 }
 
-func NewKatana() *katana {
+func NewKatana() *Katana {
 	path, err := exec.LookPath("katana")
 	if err != nil {
 		bootstrap.Logger.Fatal(err)
 	}
-	return &katana{
+	return &Katana{
 		Path: path,
 	}
 }
 
-func (k *katana) Scan(url string) ([]string, error) {
+func (k *Katana) Scan(url string) ([]string, error) {
 	rs := []string{}
 	path := k.Path
 	temp := fileutil.GetTempPathFileName()
@@ -54,7 +54,7 @@ func (k *katana) Scan(url string) ([]string, error) {
 	}
 	return rs, nil
 }
-func (k *katana) ScanJson(url string) ([]KatanaResult, error) {
+func (k *Katana) ScanJson(url string) ([]KatanaResult, error) {
 	rs := []KatanaResult{}
 	path := k.Path
 	temp := fileutil.GetTempPathFileName()

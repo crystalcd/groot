@@ -12,21 +12,21 @@ import (
 	"github.com/crystal/groot/internal/fileutil"
 )
 
-type httpx struct {
+type Httpx struct {
 	Path string
 }
 
-func NewHttpx() *httpx {
+func NewHttpx() *Httpx {
 	path, err := exec.LookPath("httpx")
 	if err != nil {
 		bootstrap.Logger.Fatal(err)
 	}
-	return &httpx{
+	return &Httpx{
 		Path: path,
 	}
 }
 
-func (h *httpx) Scan(host string, ports []string) ([]HttpxResult, error) {
+func (h *Httpx) Scan(host string, ports []string) ([]HttpxResult, error) {
 	rs := []HttpxResult{}
 	path := h.Path
 	portstr := strings.Join(ports, ",")

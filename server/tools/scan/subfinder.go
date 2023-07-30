@@ -9,27 +9,27 @@ import (
 	"github.com/crystal/groot/internal/fileutil"
 )
 
-type subfinder struct {
+type Subfinder struct {
 	Path string
 }
 
-func NewSubfinder() *subfinder {
+func NewSubfinder() *Subfinder {
 	path, err := exec.LookPath("subfinder")
 	if err != nil {
 		bootstrap.Logger.Fatal(err)
 	}
-	return &subfinder{
+	return &Subfinder{
 		Path: path,
 	}
 }
 
-func NewSubfinderWithPath(path string) *subfinder {
-	return &subfinder{
+func NewSubfinderWithPath(path string) *Subfinder {
+	return &Subfinder{
 		Path: path,
 	}
 }
 
-func (s *subfinder) Scan(domain string) ([]string, error) {
+func (s *Subfinder) Scan(domain string) ([]string, error) {
 	rs := []string{}
 	temp := fileutil.GetTempPathFileName()
 	defer os.Remove(temp)

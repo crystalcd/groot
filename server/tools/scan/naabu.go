@@ -9,21 +9,21 @@ import (
 	"github.com/crystal/groot/internal/fileutil"
 )
 
-type naabu struct {
+type Naabu struct {
 	Path string
 }
 
-func NewNaabu() *naabu {
+func NewNaabu() *Naabu {
 	path, err := exec.LookPath("naabu")
 	if err != nil {
 		bootstrap.Logger.Fatal(err)
 	}
-	return &naabu{
+	return &Naabu{
 		Path: path,
 	}
 }
 
-func (n *naabu) Scan(host string) ([]string, error) {
+func (n *Naabu) Scan(host string) ([]string, error) {
 	rs := []string{}
 	temp := fileutil.GetTempPathFileName()
 	defer os.Remove(temp)
