@@ -12,5 +12,5 @@ type ProjectController struct {
 }
 
 func (pc *ProjectController) CreateProject(c *gin.Context) {
-	Logger.Info("hhhhhh")
+
 }
