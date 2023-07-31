@@ -20,11 +20,15 @@ func TestMain(m *testing.M) {
 func TestUpdate(t *testing.T) {
 	db := app.Mongo.Database("groot")
 	tr := repository.NewTaskRepository(db)
-	task := domain.Task{
-		ID:   primitive.ObjectID{},
-		Name: "one",
+	objId, err := primitive.ObjectIDFromHex("64c7a43dea4c2e21fbbbfe63")
+	if err != nil {
+		bootstrap.Logger.Error(err)
 	}
-	_, err := tr.Update(context.Background(), &task)
+	task := domain.Task{
+		ID:     objId,
+		Status: "-2",
+	}
+	_, err = tr.Update(context.Background(), &task)
 	bootstrap.Logger.Error(err)
 }
 
@@ -32,9 +36,20 @@ func TestCreate(t *testing.T) {
 	db := app.Mongo.Database("groot")
 	tr := repository.NewTaskRepository(db)
 	task := domain.Task{
-		ID:   primitive.NewObjectID(),
-		Name: "one",
+		Name:   "one",
+		Status: "1",
 	}
 	err := tr.Create(context.Background(), &task)
 	bootstrap.Logger.Error(err)
+}
+
+func TestQuery(t *testing.T) {
+	db := app.Mongo.Database("groot")
+	tr := repository.NewTaskRepository(db)
+
+	rs, err := tr.Query(context.Background(), "64c7a43dea4c2e21fbbbfe63")
+	if err != nil {
+		bootstrap.Logger.Error(err)
+	}
+	bootstrap.Logger.Info(rs)
 }

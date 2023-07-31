@@ -6,6 +6,7 @@ import (
 	"github.com/crystal/groot/domain"
 	"github.com/qiniu/qmgo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type taskRepository struct {
@@ -29,13 +30,25 @@ func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
 func (tr *taskRepository) Update(c context.Context, task *domain.Task) (domain.Task, error) {
 	collection := tr.database.Collection(tr.collection)
 	rs := domain.Task{}
-	collection.UpdateId(c, task.ID.String(), task)
+	update := bson.M{}
+
+	if task.Name != "" {
+		update["name"] = task.Name
+	}
+	if task.Status != "" {
+		update["status"] = task.Status
+	}
+	collection.UpdateId(c, task.ID, bson.M{"$set": update})
 	return rs, nil
 }
 
-func (tr *taskRepository) QueryById(c context.Context, id string) (domain.Task, error) {
+func (tr *taskRepository) Query(c context.Context, id string) (domain.Task, error) {
 	collection := tr.database.Collection(tr.collection)
 	rs := domain.Task{}
-	err := collection.Find(c, bson.M{"id": id}).One(&rs)
+	objId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return rs, err
+	}
+	err = collection.Find(c, bson.M{"_id": objId}).One(&rs)
 	return rs, err
 }

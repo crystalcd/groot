@@ -14,7 +14,7 @@ const (
 )
 
 type Task struct {
-	ID     primitive.ObjectID `bson:"_id"`
+	ID     primitive.ObjectID `bson:"id"`
 	Name   string             `bson:"name"`
 	Status string             `bson:"status"`
 }
@@ -22,4 +22,5 @@ type Task struct {
 type TaskRepository interface {
 	Create(c context.Context, task *Task) error
 	Update(c context.Context, task *Task) (Task, error)
+	Query(c context.Context, id string) (Task, error)
 }
