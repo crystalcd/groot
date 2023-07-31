@@ -5,6 +5,7 @@ import (
 
 	"github.com/crystal/groot/domain"
 	"github.com/qiniu/qmgo"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type taskRepository struct {
@@ -25,6 +26,16 @@ func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
 	return err
 }
 
-func (tr *taskRepository) QueryUpdateById(c context.Context, task *domain.Task, id string) (domain.Task, error) {
-	return domain.Task{}, nil
+func (tr *taskRepository) Update(c context.Context, task *domain.Task) (domain.Task, error) {
+	collection := tr.database.Collection(tr.collection)
+	rs := domain.Task{}
+	collection.UpdateId(c, task.ID.String(), task)
+	return rs, nil
+}
+
+func (tr *taskRepository) QueryById(c context.Context, id string) (domain.Task, error) {
+	collection := tr.database.Collection(tr.collection)
+	rs := domain.Task{}
+	err := collection.Find(c, bson.M{"id": id}).One(&rs)
+	return rs, err
 }

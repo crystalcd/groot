@@ -8,6 +8,9 @@ import (
 
 const (
 	CollectionTask = "task"
+	TaskStarting   = 1
+	TaskSuccess    = 0
+	TaskFaild      = -1
 )
 
 type Task struct {
@@ -18,5 +21,5 @@ type Task struct {
 
 type TaskRepository interface {
 	Create(c context.Context, task *Task) error
-	QueryUpdateById(c context.Context, task *Task, id string) (Task, error)
+	Update(c context.Context, task *Task) (Task, error)
 }
