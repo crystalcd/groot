@@ -12,15 +12,17 @@ type taskRepository struct {
 	collection string
 }
 
-func NewTaskRepository(db *qmgo.Database, collection string) domain.TaskRepository {
+func NewTaskRepository(db *qmgo.Database) domain.TaskRepository {
 	return &taskRepository{
 		database:   db,
-		collection: collection,
+		collection: domain.CollectionTask,
 	}
 }
 
 func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
-	return nil
+	collection := tr.database.Collection(tr.collection)
+	_, err := collection.InsertOne(c, task)
+	return err
 }
 
 func (tr *taskRepository) QueryUpdateById(c context.Context, task *domain.Task, id string) (domain.Task, error) {

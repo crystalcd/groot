@@ -5,7 +5,9 @@ import (
 	"time"
 )
 
-const PORJECT_COLLECTION = "project"
+const (
+	CollectionPorject = "project"
+)
 
 type Project struct {
 	ProjectId   string    `bson:"project_id"`

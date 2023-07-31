@@ -12,10 +12,10 @@ type projectReposity struct {
 	collection string
 }
 
-func NewProjectReposity(db *qmgo.Database, collection string) domain.ProjectReposity {
+func NewProjectReposity(db *qmgo.Database) domain.ProjectReposity {
 	return &projectReposity{
 		database:   db,
-		collection: collection,
+		collection: domain.CollectionPorject,
 	}
 }
 
