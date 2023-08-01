@@ -13,3 +13,4 @@ go run main go
 cd server
 air
 ```
+aa
