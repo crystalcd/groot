@@ -30,14 +30,7 @@ func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
 func (tr *taskRepository) Update(c context.Context, task *domain.Task) (domain.Task, error) {
 	collection := tr.database.Collection(tr.collection)
 	rs := domain.Task{}
-	update := bson.M{}
-
-	if task.Name != "" {
-		update["name"] = task.Name
-	}
-	if task.Status != "" {
-		update["status"] = task.Status
-	}
+	update := BuildUpdate(task)
 	collection.UpdateId(c, task.ID, bson.M{"$set": update})
 	return rs, nil
 }
