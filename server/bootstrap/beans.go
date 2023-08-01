@@ -30,6 +30,7 @@ func NewLogger(env *Env) *logrus.Logger {
 	logger.SetLevel(logrus.DebugLevel)
 	logger.SetReportCaller(true)
 	logger.SetFormatter(&logrus.TextFormatter{
+		ForceColors:   true,
 		FullTimestamp: true,
 		// 添加调用者信息
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {

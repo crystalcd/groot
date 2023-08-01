@@ -8,7 +8,6 @@ import (
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/repository"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -61,51 +60,54 @@ func TestBuild(t *testing.T) {
 	task := domain.Task{
 		Name: "AA",
 	}
-	update := BuildUpdate(task)
+	testobj := TestBuildStruct{
+		Task:    task,
+		TaskPtr: &task,
+		Ints:    []int{1, 2, 3},
+		Strings: []string{"hello", "world"},
+		i:       123,
+	}
+	update := repository.BuildUpdate(testobj)
 	bootstrap.Logger.Info(update)
 }
 
-func BuildUpdate(i interface{}) bson.M {
-	return buildUpdate(i, true)
+type TestBuildStruct struct {
+	Task    domain.Task
+	TaskPtr *domain.Task
+	Ints    []int
+	Strings []string
+	i       int
 }
 
-func buildUpdate(i interface{}, ignoreID bool) bson.M {
-	update := bson.M{}
-
-	v := reflect.ValueOf(i)
-	t := reflect.TypeOf(i)
-
-	for i := 0; i < v.NumField(); i++ {
-		fieldVal := v.Field(i)
-		if isZero(fieldVal) {
-			continue
-		}
-
-		fieldName := t.Field(i).Tag.Get("bson")
-
-		// 忽略_id字段
-		if ignoreID && fieldName == "_id" {
-			continue
-		}
-
-		if fieldVal.Kind() == reflect.Struct {
-			update[fieldName] = buildUpdate(fieldVal.Interface(), ignoreID)
-		} else {
-			update[fieldName] = fieldVal.Interface()
-		}
-	}
-
-	return update
+type Inner struct {
 }
 
-func isZero(v reflect.Value) bool {
-	switch v.Kind() {
-	case reflect.String:
-		return len(v.String()) == 0
-	case reflect.Ptr, reflect.Interface:
-		return v.IsNil()
-	default:
-		// Others like int, float64 etc are default to their zero value
-		return v.Interface() == reflect.Zero(v.Type()).Interface()
+func TestRefeact(t *testing.T) {
+	task := domain.Task{
+		Status: "1",
 	}
+
+	type1 := reflect.TypeOf(task)
+	typeptr := reflect.TypeOf(&task)
+	tp := type1.Kind()
+	prtkind := typeptr.Kind()
+	value := reflect.ValueOf(task)
+	valueptr := reflect.ValueOf(&task)
+	bootstrap.Logger.Debug(type1, tp)
+	bootstrap.Logger.Debug(typeptr, prtkind)
+	bootstrap.Logger.Debug(value)
+	bootstrap.Logger.Debug(valueptr)
+
+	for i := 0; i < type1.NumField(); i++ {
+		bootstrap.Logger.Debug("FieldName:", type1.Field(i).Name, "FieldType:", type1.Field(i).Type, "FieldValue:", value.Field(i))
+	}
+
+	bootstrap.Logger.Debugln("-----------------------------------------------------")
+
+	for i := 0; i < value.NumField(); i++ {
+		bootstrap.Logger.Debug("FieldName:", type1.Field(i).Name, "FieldType:", type1.Field(i).Type, "FieldValue:", value.Field(i))
+	}
+
+	zero := reflect.Zero(type1)
+	bootstrap.Logger.Debug(zero)
 }
