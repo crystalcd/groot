@@ -22,16 +22,18 @@ func TestMain(m *testing.M) {
 func TestUpdate(t *testing.T) {
 	db := app.Mongo.Database("groot")
 	tr := repository.NewTaskRepository(db)
-	objId, err := primitive.ObjectIDFromHex("64c85f3a3f3ccb00c2f93fac")
+	objId, err := primitive.ObjectIDFromHex("64c7a43dea4c2e21fbbbfe63")
 	if err != nil {
 		bootstrap.Logger.Error(err)
 	}
 	task := domain.Task{
 		ID:     objId,
-		Status: "0",
+		Status: "12334234",
 	}
 	_, err = tr.Update(context.Background(), &task)
-	bootstrap.Logger.Error(err)
+	if err != nil {
+		bootstrap.Logger.Error(err)
+	}
 }
 
 func TestCreate(t *testing.T) {
@@ -50,7 +52,7 @@ func TestQuery(t *testing.T) {
 	db := app.Mongo.Database("groot")
 	tr := repository.NewTaskRepository(db)
 
-	rs, err := tr.Query(context.Background(), "64c85f3a3f3ccb00c2f93fac")
+	rs, err := tr.Query(context.Background(), "64c7a43dea4c2e21fbbbfe63")
 	if err != nil {
 		bootstrap.Logger.Error(err)
 	}
@@ -187,34 +189,4 @@ func TestBuildUpdate1(t *testing.T) {
 	if !reflect.DeepEqual(expected1, actual) {
 		t.Errorf("expected: %v, got: %v", expected1, actual)
 	}
-}
-
-func buildUpdate(i interface{}) map[string]interface{} {
-
-	result := make(map[string]interface{})
-
-	v := reflect.ValueOf(i)
-
-	// 遍历结构体字段
-	for i := 0; i < v.NumField(); i++ {
-		fieldVal := v.Field(i)
-
-		// 处理非导出字段
-		if !fieldVal.CanInterface() || repository.IsZero(v) {
-			continue
-		}
-
-		fieldName := v.Type().Field(i).Name
-		fieldType := v.Type().Field(i).Type
-
-		// 如果字段是结构体,递归处理
-		if fieldType.Kind() == reflect.Struct {
-			result[fieldName] = buildUpdate(fieldVal.Interface())
-			continue
-		}
-
-		result[fieldName] = fieldVal.Interface()
-	}
-
-	return result
 }

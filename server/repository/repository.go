@@ -15,6 +15,13 @@ func buildUpdate(i interface{}, ignoreID bool) bson.M {
 	update := make(bson.M)
 
 	v := reflect.ValueOf(i)
+	t := reflect.TypeOf(i)
+	if t.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return update
+		}
+		v = v.Elem()
+	}
 
 	// 遍历结构体字段
 	for i := 0; i < v.NumField(); i++ {
