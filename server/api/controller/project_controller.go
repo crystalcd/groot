@@ -2,9 +2,11 @@ package controller
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
+	"github.com/crystal/groot/domain/e"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +18,14 @@ type ProjectController struct {
 }
 
 func (pc *ProjectController) CreateProject(c *gin.Context) {
-	project := domain.Project{}
-	pc.ProjectService.CreateProject(context.Background(), project)
+	r := domain.Gin{C: c}
+	var project domain.Project
+	if err := c.BindJSON(&project); err != nil {
+		r.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		return
+	}
+	if err := pc.ProjectService.CreateProject(context.Background(), project); err != nil {
+		r.Response(http.StatusInternalServerError, e.ERROR, nil)
+	}
+	r.Response(http.StatusOK, e.SUCCESS, nil)
 }

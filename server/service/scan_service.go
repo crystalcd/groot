@@ -18,6 +18,7 @@ type ScanService struct {
 	Wappalyze           *scan.Wappalyze
 	Waybackurls         *scan.Waybackurls
 	SubdomainRepository domain.SubdomainRepository
+	Task                domain.TaskRepository
 }
 
 func NewScanService(s *scan.Subfinder, n *scan.Naabu, h *scan.Httpx, sr domain.SubdomainRepository) *ScanService {

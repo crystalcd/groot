@@ -19,7 +19,7 @@ func NewProjectReposity(db *qmgo.Database) domain.ProjectReposity {
 	}
 }
 
-func (p *projectReposity) InsertPorject(c context.Context, project domain.Project) error {
+func (p *projectReposity) Create(c context.Context, project domain.Project) error {
 	collection := p.database.Collection(p.collection)
 	_, err := collection.InsertOne(c, project)
 	return err

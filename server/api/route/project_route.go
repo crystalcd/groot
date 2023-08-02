@@ -13,9 +13,10 @@ import (
 func NewProjectRoute(app *bootstrap.Application, timeout time.Duration, group *gin.RouterGroup) {
 	db := app.Mongo.Database("groot")
 	pr := repository.NewProjectReposity(db)
+	tr := repository.NewTaskRepository(db)
 	pc := &controller.ProjectController{
 		App:            app,
-		ProjectService: service.NewProjectService(app, pr),
+		ProjectService: service.NewProjectService(app, pr, tr),
 	}
 	group.POST("/project", pc.CreateProject)
 }
