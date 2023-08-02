@@ -12,51 +12,45 @@ func BuildUpdate(i interface{}) bson.M {
 }
 
 func buildUpdate(i interface{}, ignoreID bool) bson.M {
-	update := bson.M{}
-	t := reflect.TypeOf(i)
-	v := reflect.ValueOf(i)
-	t.Kind()
-	v.Kind()
-	bootstrap.Logger.Debug(t, v)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-		v = reflect.Indirect(reflect.ValueOf(i)) // 处理指针
-	}
-	bootstrap.Logger.Debug(t, v)
+	update := make(bson.M)
 
-	for i := 0; i < t.NumField(); i++ {
+	v := reflect.ValueOf(i)
+
+	// 遍历结构体字段
+	for i := 0; i < v.NumField(); i++ {
 		fieldVal := v.Field(i)
-		bootstrap.Logger.Debug("FieldValue:", fieldVal)
+
+		fieldName := v.Type().Field(i).Name
+		fieldType := v.Type().Field(i).Type
+		// 处理非导出字段
 		if !fieldVal.CanInterface() {
 			continue
 		}
-
-		fieldName := t.Field(i).Tag.Get("bson")
-		if ignoreID && fieldName == "_id" {
-			continue
-		}
-
-		if isZero(fieldVal) {
-			continue
-		}
-		fieldType := t.Field(i)
-		if fieldType.Type.Kind() == reflect.Ptr {
-			actualType := fieldType.Type.Elem()
-			if actualType.Kind() == reflect.Struct {
-				update[fieldName] = buildUpdate(fieldVal.Interface(), ignoreID)
+		bootstrap.Logger.Info(fieldVal.Kind())
+		if fieldVal.Kind() == reflect.Ptr {
+			if fieldVal.IsNil() {
+				continue
 			}
-		} else if fieldType.Type.Kind() == reflect.Struct {
-			update[fieldName] = buildUpdate(fieldVal.Interface(), ignoreID)
-		} else {
-			update[fieldName] = fieldVal.Interface()
+			fieldVal = fieldVal.Elem()
+			fieldType = fieldVal.Type()
 		}
+		if IsZero(fieldVal) {
+			continue
+		}
+
+		// 如果字段是结构体,递归处理
+		if fieldType.Kind() == reflect.Struct {
+			update[fieldName] = buildUpdate(fieldVal.Interface(), ignoreID)
+			continue
+		}
+
+		update[fieldName] = fieldVal.Interface()
 	}
 
-	bootstrap.Logger.Debugf("repository update json:%+v", update)
 	return update
 }
 
-func isZero(v reflect.Value) bool {
+func IsZero(v reflect.Value) bool {
 	bootstrap.Logger.Debug("value kind: ", v.Kind(), v)
 	switch v.Kind() {
 	case reflect.Invalid:

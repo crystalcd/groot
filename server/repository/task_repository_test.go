@@ -8,6 +8,7 @@ import (
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/repository"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -110,4 +111,110 @@ func TestRefeact(t *testing.T) {
 
 	zero := reflect.Zero(type1)
 	bootstrap.Logger.Debug(zero)
+}
+
+func TestIsZero(t *testing.T) {
+	task := domain.Task{}
+	cases := []struct {
+		val  interface{}
+		zero bool
+	}{
+		{0, true},
+		{"", true},
+		{nil, true},
+		{[]int{}, true},
+		{map[string]int{}, true},
+		{struct{}{}, true},
+		{1, false},
+		{"foo", false},
+		{map[string]int{"a": 1}, false},
+		{(*int)(nil), true},
+		{&task, false},
+	}
+
+	for _, c := range cases {
+		if repository.IsZero(reflect.ValueOf(c.val)) != c.zero {
+			t.Errorf("isZero %v failed", c.val)
+		}
+	}
+}
+
+type User struct {
+	Name string
+	Age  int
+}
+
+type Order struct {
+	ID      int
+	User    User
+	UserPtr *User
+	Items   []string
+	i       int
+}
+
+func TestBuildUpdate1(t *testing.T) {
+	o := Order{
+		ID: 1,
+		User: User{
+			Name: "John",
+			Age:  30,
+		},
+
+		Items: []string{"item1", "item2"},
+	}
+
+	// expected := map[string]interface{}{
+	// 	"ID": 1,
+	// 	"User": map[string]interface{}{
+	// 		"Name": "John",
+	// 		"Age":  30,
+	// 	},
+	// 	"Items": []string{"item1", "item2"},
+	// }
+
+	expected1 := bson.M{
+		"ID": 1,
+		"User": bson.M{
+			"Name": "John",
+			"Age":  30,
+		},
+		"Items": []string{"item1", "item2"},
+	}
+
+	actual := repository.BuildUpdate(o)
+	// actual := buildUpdate(o)
+	bootstrap.Logger.Info(actual)
+	if !reflect.DeepEqual(expected1, actual) {
+		t.Errorf("expected: %v, got: %v", expected1, actual)
+	}
+}
+
+func buildUpdate(i interface{}) map[string]interface{} {
+
+	result := make(map[string]interface{})
+
+	v := reflect.ValueOf(i)
+
+	// 遍历结构体字段
+	for i := 0; i < v.NumField(); i++ {
+		fieldVal := v.Field(i)
+
+		// 处理非导出字段
+		if !fieldVal.CanInterface() || repository.IsZero(v) {
+			continue
+		}
+
+		fieldName := v.Type().Field(i).Name
+		fieldType := v.Type().Field(i).Type
+
+		// 如果字段是结构体,递归处理
+		if fieldType.Kind() == reflect.Struct {
+			result[fieldName] = buildUpdate(fieldVal.Interface())
+			continue
+		}
+
+		result[fieldName] = fieldVal.Interface()
+	}
+
+	return result
 }
