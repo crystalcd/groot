@@ -8,23 +8,23 @@ import (
 )
 
 type projectService struct {
-	App             *bootstrap.Application
-	ProjectReposity domain.ProjectReposity
-	TaskRepository  domain.TaskRepository
+	App               *bootstrap.Application
+	ProjectRepository domain.ProjectRepository
+	TaskRepository    domain.TaskRepository
 }
 
-func NewProjectService(app *bootstrap.Application, pr domain.ProjectReposity, tr domain.TaskRepository) domain.ProjectService {
+func NewProjectService(app *bootstrap.Application, pr domain.ProjectRepository, tr domain.TaskRepository) domain.ProjectService {
 	return &projectService{
-		App:             app,
-		ProjectReposity: pr,
-		TaskRepository:  tr,
+		App:               app,
+		ProjectRepository: pr,
+		TaskRepository:    tr,
 	}
 }
 
 func (p *projectService) CreateProject(c context.Context, project domain.Project) error {
 	callback := func(sessCtx context.Context) (interface{}, error) {
 		// Important: make sure the sessCtx used in every operation in the whole transaction
-		if err := p.ProjectReposity.Create(c, project); err != nil {
+		if err := p.ProjectRepository.Create(c, project); err != nil {
 			return nil, err
 		}
 		task := domain.Task{}

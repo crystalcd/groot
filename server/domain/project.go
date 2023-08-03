@@ -16,7 +16,7 @@ type Project struct {
 	CreateTime  time.Time `bson:"timestamp"`
 }
 
-type ProjectReposity interface {
+type ProjectRepository interface {
 	Create(c context.Context, project Project) error
 }
 
