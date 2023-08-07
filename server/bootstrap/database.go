@@ -15,7 +15,6 @@ func NewMongoDataBase(env *Env) *qmgo.Client {
 	dbPort := env.DBPort
 
 	mongoDBURI := fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
-
 	client, err := qmgo.NewClient(ctx, &qmgo.Config{
 		Uri: mongoDBURI,
 	})

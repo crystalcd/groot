@@ -9,7 +9,6 @@ import (
 	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/repository"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var app bootstrap.Application
@@ -22,15 +21,11 @@ func TestMain(m *testing.M) {
 func TestUpdate(t *testing.T) {
 	db := app.Mongo.Database("groot")
 	tr := repository.NewTaskRepository(db)
-	objId, err := primitive.ObjectIDFromHex("64c7a43dea4c2e21fbbbfe63")
-	if err != nil {
-		bootstrap.Logger.Error(err)
-	}
+
 	task := domain.Task{
-		ID:     objId,
 		Status: "12334234",
 	}
-	_, err = tr.Update(context.Background(), &task)
+	_, err := tr.Update(context.Background(), &task)
 	if err != nil {
 		bootstrap.Logger.Error(err)
 	}
@@ -40,7 +35,6 @@ func TestCreate(t *testing.T) {
 	db := app.Mongo.Database("groot")
 	tr := repository.NewTaskRepository(db)
 	task := domain.Task{
-		ID:     primitive.NewObjectID(),
 		Name:   "one",
 		Status: "1",
 	}

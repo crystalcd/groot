@@ -6,7 +6,7 @@ import (
 
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/crystal/groot/internal/versionutil"
 )
 
 type projectService struct {
@@ -26,11 +26,20 @@ func NewProjectService(app *bootstrap.Application, pr domain.ProjectRepository, 
 func (p *projectService) CreateProject(c context.Context, project domain.Project) error {
 	callback := func(sessCtx context.Context) (interface{}, error) {
 		// Important: make sure the sessCtx used in every operation in the whole transaction
+		projects, err := p.ProjectRepository.QueryByName(c, project.ProjectName)
+		if err != nil {
+			return nil, fmt.Errorf("CreateProject QueryByname %v", err)
+		}
+		pj := projects[0]
+		newVersion, err := versionutil.GetNewVersion(pj.Version)
+		if err != nil {
+			return nil, fmt.Errorf("version GetNewVersion version:%s err QueryByname %v", pj.Version, err)
+		}
+		project.Version = newVersion
 		if err := p.ProjectRepository.Create(c, project); err != nil {
 			return nil, err
 		}
 		task := domain.Task{}
-		task.ID = primitive.NewObjectID()
 		if err := p.TaskRepository.Create(c, &task); err != nil {
 			return nil, err
 		}

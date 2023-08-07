@@ -5,6 +5,7 @@ import (
 
 	"github.com/crystal/groot/api/route"
 	"github.com/crystal/groot/bootstrap"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +18,7 @@ func main() {
 	timeout := time.Duration(env.ContextTimeout) * time.Second
 
 	gin := gin.Default()
+	gin.Use(static.Serve("/", static.LocalFile("./static", false)))
 	route.Setup(&app, timeout, gin)
 	gin.Run(env.ServerAddress)
 }

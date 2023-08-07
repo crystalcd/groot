@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
@@ -24,6 +25,7 @@ func (pc *ProjectController) CreateProject(c *gin.Context) {
 		r.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
 		return
 	}
+	project.CreateTime = time.Now()
 	if err := pc.ProjectService.CreateProject(context.Background(), project); err != nil {
 		bootstrap.Logger.Error(err)
 		r.Response(http.StatusInternalServerError, e.ERROR, nil)

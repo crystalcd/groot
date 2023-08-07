@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/crystal/groot/domain"
 	"github.com/qiniu/qmgo"
@@ -23,16 +24,15 @@ func NewTaskRepository(db *qmgo.Database) domain.TaskRepository {
 
 func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
 	collection := tr.database.Collection(tr.collection)
-	_, err := collection.InsertOne(c, task)
-	return err
+	if _, err := collection.InsertOne(c, task); err != nil {
+		return fmt.Errorf("insert task taskId:%v err %v", task, err)
+	}
+	return nil
 }
 
 func (tr *taskRepository) Update(c context.Context, task *domain.Task) (domain.Task, error) {
-	collection := tr.database.Collection(tr.collection)
-	rs := domain.Task{}
-	update := BuildUpdate(task)
-	collection.UpdateId(c, task.ID, bson.M{"$set": update})
-	return rs, nil
+
+	return domain.Task{}, nil
 }
 
 func (tr *taskRepository) Query(c context.Context, id string) (domain.Task, error) {
