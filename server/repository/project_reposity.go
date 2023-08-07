@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
 	"github.com/qiniu/qmgo"
 )
@@ -23,5 +24,9 @@ func NewProjectRepository(db *qmgo.Database) domain.ProjectRepository {
 func (p *projectRepository) Create(c context.Context, project domain.Project) error {
 	collection := p.database.Collection(p.collection)
 	_, err := collection.InsertOne(c, project)
-	return fmt.Errorf("failed to save the project,projectId:%s; %v", project.ProjectId, err)
+	if err != nil {
+		return fmt.Errorf("failed to save the project,projectId:%s; %v", project.ProjectId, err)
+	}
+	bootstrap.Logger.Debugf("insert prject success value: %v", project)
+	return nil
 }

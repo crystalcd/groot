@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type projectService struct {
@@ -28,11 +30,15 @@ func (p *projectService) CreateProject(c context.Context, project domain.Project
 			return nil, err
 		}
 		task := domain.Task{}
+		task.ID = primitive.NewObjectID()
 		if err := p.TaskRepository.Create(c, &task); err != nil {
 			return nil, err
 		}
 		return nil, nil
 	}
 	_, err := p.App.Mongo.DoTransaction(c, callback)
-	return err
+	if err != nil {
+		return fmt.Errorf("create project err %v", err)
+	}
+	return nil
 }

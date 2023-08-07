@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/crystal/groot/domain"
 	"github.com/qiniu/qmgo"
@@ -22,5 +23,5 @@ func NewSubdomainRepository(db *qmgo.Database, collection string) domain.Subdoma
 func (sr *subdomainRepository) InsertSubdomains(c context.Context, subdomains []domain.Subdomain) error {
 	collection := sr.database.Collection(sr.collection)
 	_, err := collection.InsertMany(c, subdomains)
-	return err
+	return fmt.Errorf("insert subdomains %v err %v", subdomains, err)
 }
