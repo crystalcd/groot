@@ -4,7 +4,6 @@ import (
 	"context"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/crystal/groot/bootstrap"
 	"github.com/crystal/groot/domain"
@@ -12,43 +11,67 @@ import (
 )
 
 type ScanService struct {
-	Subfinder           *scan.Subfinder
-	Naabu               *scan.Naabu
-	Httpx               *scan.Httpx
-	Wappalyze           *scan.Wappalyze
-	Waybackurls         *scan.Waybackurls
 	SubdomainRepository domain.SubdomainRepository
-	Task                domain.TaskRepository
+	TaskRepository      domain.TaskRepository
 }
 
-func NewScanService(s *scan.Subfinder, n *scan.Naabu, h *scan.Httpx, sr domain.SubdomainRepository) *ScanService {
+func NewScanService(sr domain.SubdomainRepository, tr domain.TaskRepository) *ScanService {
 	return &ScanService{
-		Subfinder:           s,
-		Naabu:               n,
-		Httpx:               h,
 		SubdomainRepository: sr,
+		TaskRepository:      tr,
 	}
 }
 
-func (s *ScanService) Scan(project, target string) {
-	subdomains := s.BatchSubfinder(target)
-	bootstrap.Logger.Info(subdomains)
-	portMap := s.BatchNaabu(subdomains)
-	domains := []domain.Subdomain{}
-	for k, v := range portMap {
-		domainLine := domain.Subdomain{
-			Project:    project,
-			Domain:     k,
-			From:       "subfinder",
-			Ports:      v,
-			CreateTime: time.Now(),
-		}
-		domains = append(domains, domainLine)
+func (s *ScanService) Scan(project domain.Project) {
+
+	target := strings.Join(project.Domains, ",")
+	subdomains := s.RunSubfinder(project, target)
+	portMap := s.RunNaabu(project, subdomains)
+	s.RunHttpx(project, portMap)
+}
+
+func (s *ScanService) RunSubfinder(project domain.Project, target string) []string {
+	task := domain.Task{
+		Name:    "Subfinder",
+		Status:  "0",
+		Version: project.Version,
 	}
-	s.SubdomainRepository.InsertSubdomains(context.Background(), domains)
-	bootstrap.Logger.Info(portMap)
-	httxResult := s.BatchHttpx(portMap)
-	bootstrap.Logger.Info(httxResult)
+	s.TaskRepository.Create(context.Background(), &task)
+	task.Status = "1"
+	defer s.TaskRepository.Create(context.Background(), &task)
+
+	subdomains := s.BatchSubfinder(target)
+	return subdomains
+}
+
+func (s *ScanService) RunNaabu(project domain.Project, subdomains []string) map[string][]int {
+	task := domain.Task{
+		Name:    "Naabu",
+		Status:  "0",
+		Version: project.Version,
+	}
+	s.TaskRepository.Create(context.Background(), &task)
+	task.Status = "1"
+	defer s.TaskRepository.Create(context.Background(), &task)
+
+	rs := s.BatchNaabu(subdomains)
+	//todo add save result
+	return rs
+}
+
+func (s *ScanService) RunHttpx(project domain.Project, portMap map[string][]int) []scan.HttpxResult {
+	task := domain.Task{
+		Name:    "Httpx",
+		Status:  "0",
+		Version: project.Version,
+	}
+	s.TaskRepository.Create(context.Background(), &task)
+	task.Status = "1"
+	defer s.TaskRepository.Create(context.Background(), &task)
+
+	rs := s.BatchHttpx(portMap)
+	//todo add save result
+	return rs
 }
 
 func (s *ScanService) BatchSubfinder(target string) []string {
@@ -59,7 +82,7 @@ func (s *ScanService) BatchSubfinder(target string) []string {
 		domain := line
 		sw.Add(1)
 		bootstrap.DomainPool.Submit(func() {
-			domains, err := s.Subfinder.Scan(domain)
+			domains, err := scan.Sf.Scan(domain)
 			if err != nil {
 				bootstrap.Logger.Error(err)
 			}
@@ -84,7 +107,7 @@ func (s *ScanService) BatchNaabu(subdomains []string) map[string][]int {
 		host := line
 		sw.Add(1)
 		bootstrap.PortPool.Submit(func() {
-			ports, err = s.Naabu.Scan(host)
+			ports, err = scan.Nb.Scan(host)
 			if err != nil {
 				bootstrap.Logger.Error(err)
 			}
@@ -108,7 +131,7 @@ func (s *ScanService) BatchHttpx(portMap map[string][]int) []scan.HttpxResult {
 		ports := v
 		sw.Add(1)
 		bootstrap.HttpPool.Submit(func() {
-			rs, err := s.Httpx.Scan(domain, ports)
+			rs, err := scan.Hx.Scan(domain, ports)
 			if err != nil {
 				bootstrap.Logger.Error(err)
 			}

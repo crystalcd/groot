@@ -8,32 +8,27 @@ import (
 	"testing"
 
 	"github.com/crystal/groot/bootstrap"
+	"github.com/crystal/groot/domain"
 	"github.com/crystal/groot/repository"
 	"github.com/crystal/groot/service"
-	"github.com/crystal/groot/tools/scan"
 )
 
+var App bootstrap.Application
+
 func TestMain(m *testing.M) {
-	app := bootstrap.App()
-	bootstrap.InjectBeans(app.Env)
+	App = bootstrap.App()
+	bootstrap.InjectBeans(App.Env)
 	m.Run()
 }
 
 func TestScan(t *testing.T) {
-	s := scan.NewSubfinder()
-	n := scan.NewNaabu()
-	h := scan.NewHttpx()
-	sr := repository.NewSubdomainRepository(bootstrap.App().Mongo.Database("groot"), "domain")
-	scanService := service.NewScanService(s, n, h, sr)
-	scanService.Scan("zoom", "zoom.us")
 }
 
 func TestHttpScan(t *testing.T) {
-	s := scan.NewSubfinder()
-	n := scan.NewNaabu()
-	h := scan.NewHttpx()
-	sr := repository.NewSubdomainRepository(bootstrap.App().Mongo.Database("groot"), "domain")
-	scanService := service.NewScanService(s, n, h, sr)
+	db := App.Mongo.Database("groot")
+	sr := repository.NewSubdomainRepository(db, "domain")
+	tr := repository.NewTaskRepository(db)
+	scanService := service.NewScanService(sr, tr)
 	portMap := make(map[string][]int)
 	portMap["zoom.us"] = []int{443, 80}
 	scanService.BatchHttpx(portMap)
@@ -62,4 +57,30 @@ Te: trailers
 		panic(err)
 	}
 	fmt.Printf("%+v", request)
+}
+
+func TestScanService_Scan(t *testing.T) {
+	type fields struct {
+		SubdomainRepository domain.SubdomainRepository
+		TaskRepository      domain.TaskRepository
+	}
+	type args struct {
+		project domain.Project
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &service.ScanService{
+				SubdomainRepository: tt.fields.SubdomainRepository,
+				TaskRepository:      tt.fields.TaskRepository,
+			}
+			s.Scan(tt.args.project)
+		})
+	}
 }

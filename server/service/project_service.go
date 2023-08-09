@@ -33,16 +33,16 @@ func (p *projectService) CreateProject(c context.Context, project domain.Project
 		pj := projects[0]
 		newVersion, err := versionutil.GetNewVersion(pj.Version)
 		if err != nil {
-			return nil, fmt.Errorf("version GetNewVersion version:%s err QueryByname %v", pj.Version, err)
+			newVersion = "0.0.0.0"
 		}
 		project.Version = newVersion
 		if err := p.ProjectRepository.Create(c, project); err != nil {
 			return nil, err
 		}
-		task := domain.Task{}
-		if err := p.TaskRepository.Create(c, &task); err != nil {
-			return nil, err
-		}
+		// task := domain.Task{}
+		// if err := p.TaskRepository.Create(c, &task); err != nil {
+		// 	return nil, err
+		// }
 		return nil, nil
 	}
 	_, err := p.App.Mongo.DoTransaction(c, callback)
