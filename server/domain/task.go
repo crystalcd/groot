@@ -18,7 +18,7 @@ type Task struct {
 }
 
 type TaskRepository interface {
-	Create(c context.Context, task *Task) error
-	Update(c context.Context, task *Task) (Task, error)
+	Create(c context.Context, task Task) error
+	Update(c context.Context, task Task) (Task, error)
 	Query(c context.Context, id string) (Task, error)
 }

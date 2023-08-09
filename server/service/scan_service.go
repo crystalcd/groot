@@ -27,7 +27,10 @@ func (s *ScanService) Scan(project domain.Project) {
 	target := strings.Join(project.Domains, ",")
 	subdomains := s.RunSubfinder(project, target)
 	portMap := s.RunNaabu(project, subdomains)
-	s.RunHttpx(project, portMap)
+	rs := s.RunHttpx(project, portMap)
+	bootstrap.Logger.Debugln(subdomains)
+	bootstrap.Logger.Debugln(portMap)
+	bootstrap.Logger.Debugln(rs)
 }
 
 func (s *ScanService) RunSubfinder(project domain.Project, target string) []string {
@@ -36,11 +39,14 @@ func (s *ScanService) RunSubfinder(project domain.Project, target string) []stri
 		Status:  "0",
 		Version: project.Version,
 	}
-	s.TaskRepository.Create(context.Background(), &task)
+	if err := s.TaskRepository.Create(context.Background(), task); err != nil {
+		bootstrap.Logger.Error(err)
+	}
 	task.Status = "1"
-	defer s.TaskRepository.Create(context.Background(), &task)
+	defer s.TaskRepository.Create(context.Background(), task)
 
 	subdomains := s.BatchSubfinder(target)
+	bootstrap.Logger.Debug("BatchSubfinder")
 	return subdomains
 }
 
@@ -50,12 +56,12 @@ func (s *ScanService) RunNaabu(project domain.Project, subdomains []string) map[
 		Status:  "0",
 		Version: project.Version,
 	}
-	s.TaskRepository.Create(context.Background(), &task)
+	s.TaskRepository.Create(context.Background(), task)
 	task.Status = "1"
-	defer s.TaskRepository.Create(context.Background(), &task)
+	defer s.TaskRepository.Create(context.Background(), task)
 
 	rs := s.BatchNaabu(subdomains)
-	//todo add save result
+	bootstrap.Logger.Debug("BatchNaabu")
 	return rs
 }
 
@@ -65,12 +71,12 @@ func (s *ScanService) RunHttpx(project domain.Project, portMap map[string][]int)
 		Status:  "0",
 		Version: project.Version,
 	}
-	s.TaskRepository.Create(context.Background(), &task)
+	s.TaskRepository.Create(context.Background(), task)
 	task.Status = "1"
-	defer s.TaskRepository.Create(context.Background(), &task)
+	defer s.TaskRepository.Create(context.Background(), task)
 
 	rs := s.BatchHttpx(portMap)
-	//todo add save result
+	bootstrap.Logger.Debug("BatchHttpx")
 	return rs
 }
 

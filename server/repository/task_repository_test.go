@@ -25,7 +25,7 @@ func TestUpdate(t *testing.T) {
 	task := domain.Task{
 		Status: "12334234",
 	}
-	_, err := tr.Update(context.Background(), &task)
+	_, err := tr.Update(context.Background(), task)
 	if err != nil {
 		bootstrap.Logger.Error(err)
 	}
@@ -38,7 +38,7 @@ func TestCreate(t *testing.T) {
 		Name:   "one",
 		Status: "1",
 	}
-	err := tr.Create(context.Background(), &task)
+	err := tr.Create(context.Background(), task)
 	bootstrap.Logger.Error(err)
 }
 

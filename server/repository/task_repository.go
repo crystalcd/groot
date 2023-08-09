@@ -22,7 +22,7 @@ func NewTaskRepository(db *qmgo.Database) domain.TaskRepository {
 	}
 }
 
-func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
+func (tr *taskRepository) Create(c context.Context, task domain.Task) error {
 	collection := tr.database.Collection(tr.collection)
 	if _, err := collection.InsertOne(c, task); err != nil {
 		return fmt.Errorf("insert task taskId:%v err %v", task, err)
@@ -30,7 +30,7 @@ func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
 	return nil
 }
 
-func (tr *taskRepository) Update(c context.Context, task *domain.Task) (domain.Task, error) {
+func (tr *taskRepository) Update(c context.Context, task domain.Task) (domain.Task, error) {
 
 	return domain.Task{}, nil
 }

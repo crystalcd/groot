@@ -38,10 +38,12 @@ func (s *Subfinder) Scan(domain string) ([]string, error) {
 		"-o", temp,
 	}
 	cmd := exec.Command(s.Path, cmdArgs...)
-	_, err := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return rs, err
 	}
+	bootstrap.Logger.Debugf("subfinder: %s", domain)
+	bootstrap.Logger.Debugf("output:%s\n", output)
 
 	data, err := os.ReadFile(temp)
 	if err != nil {

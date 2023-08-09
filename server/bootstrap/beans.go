@@ -27,7 +27,7 @@ func InjectBeans(env *Env) {
 
 func NewLogger(env *Env) *logrus.Logger {
 	logger := logrus.New()
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.TraceLevel)
 	logger.SetReportCaller(true)
 	logger.SetFormatter(&logrus.TextFormatter{
 		ForceColors:   true,
